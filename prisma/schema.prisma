@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model favorites {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String    @db.Uuid
+  listing_id String    @db.Uuid
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  listings   listings  @relation(fields: [listing_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, listing_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model listing_photos {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  listing_id String    @db.Uuid
+  url        String    @db.VarChar
+  sort_order Int?      @default(0)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  listings   listings  @relation(fields: [listing_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model listings {
+  id                   String                    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  owner_id             String                    @db.Uuid
+  title                String                    @db.VarChar
+  description          String?
+  room_type            room_type_enum
+  rent_price           Decimal                   @db.Decimal(10, 2)
+  deposit              Decimal?                  @default(0.00) @db.Decimal(10, 2)
+  move_in_date         DateTime?                 @db.Date
+  contact_phone        String?                   @db.VarChar
+  contact_kakao        String?                   @db.VarChar
+  address_raw          String?                   @db.VarChar
+  location             Unsupported("geography")?
+  city                 String?                   @db.VarChar
+  gender_preference    preference_gender_enum?
+  pets_allowed         Boolean?                  @default(false)
+  smoking_allowed      Boolean?                  @default(false)
+  parking_available    Boolean?                  @default(false)
+  furnished            Boolean?                  @default(false)
+  electricity_included Boolean?                  @default(false)
+  water_included       Boolean?                  @default(false)
+  gas_included         Boolean?                  @default(false)
+  internet_included    Boolean?                  @default(false)
+  trash_included       Boolean?                  @default(false)
+  has_washer           Boolean?                  @default(false)
+  has_dryer            Boolean?                  @default(false)
+  has_refrigerator     Boolean?                  @default(false)
+  has_ac               Boolean?                  @default(false)
+  has_heating          Boolean?                  @default(false)
+  has_tv               Boolean?                  @default(false)
+  amenities_etc        String?                   @db.VarChar
+  status               listing_status_enum?      @default(active)
+  created_at           DateTime?                 @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?                 @default(now()) @db.Timestamptz(6)
+  expires_at           DateTime?                 @db.Timestamptz(6)
+  favorites            favorites[]
+  listing_photos       listing_photos[]
+  users                users                     @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([city], map: "idx_listings_city")
+  @@index([location], map: "idx_listings_location", type: Gist)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model roommate_favorites {
+  id                String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id           String            @db.Uuid
+  target_profile_id String            @db.Uuid
+  created_at        DateTime?         @default(now()) @db.Timestamptz(6)
+  roommate_profiles roommate_profiles @relation(fields: [target_profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users             users             @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, target_profile_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model roommate_profiles {
+  id                        String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                   String                  @db.Uuid
+  desired_city              String                  @db.VarChar
+  budget_min                Decimal?                @default(0.00) @db.Decimal(10, 2)
+  budget_max                Decimal?                @db.Decimal(10, 2)
+  wake_up_time              DateTime?               @db.Time(6)
+  sleep_time                DateTime?               @db.Time(6)
+  cleanliness_level         Int?
+  smoking                   Boolean?                @default(false)
+  pets_ok                   Boolean?                @default(false)
+  preferred_roommate_gender preference_gender_enum?
+  self_intro                String?
+  move_in_date              DateTime?               @db.Date
+  matching_active           Boolean?                @default(true)
+  created_at                DateTime?               @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime?               @default(now()) @db.Timestamptz(6)
+  roommate_favorites        roommate_favorites[]
+  users                     users                   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spatial_ref_sys {
+  srid      Int     @id
+  auth_name String? @db.VarChar(256)
+  auth_srid Int?
+  srtext    String? @db.VarChar(2048)
+  proj4text String? @db.VarChar(2048)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model users {
+  id                  String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email               String               @unique @db.VarChar
+  auth_provider       auth_provider_enum
+  auth_provider_id    String               @db.VarChar
+  name                String?              @db.VarChar
+  birth_date          DateTime?            @db.Date
+  gender              gender_enum?
+  profile_photo_url   String?              @db.VarChar
+  phone_number        String?              @db.VarChar
+  kakao_id            String?              @db.VarChar
+  is_verified         Boolean?             @default(false)
+  occupation_type     String?              @db.VarChar
+  school_or_workplace String?              @db.VarChar
+  region              String?              @db.VarChar
+  language_pref       String?              @db.VarChar
+  created_at          DateTime?            @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?            @default(now()) @db.Timestamptz(6)
+  favorites           favorites[]
+  listings            listings[]
+  roommate_favorites  roommate_favorites[]
+  roommate_profiles   roommate_profiles[]
+}
+
+enum auth_provider_enum {
+  google
+  kakao
+}
+
+enum gender_enum {
+  M
+  F
+  Other
+}
+
+enum listing_status_enum {
+  active
+  rented
+  expired
+  reported
+}
+
+enum preference_gender_enum {
+  M
+  F
+  Any
+}
+
+enum room_type_enum {
+  Private
+  Shared
+  Studio
+  Master_Bedroom @map("Master Bedroom")
+}
