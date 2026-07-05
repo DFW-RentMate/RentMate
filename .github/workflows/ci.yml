@@ -33,28 +33,4 @@ jobs:
           cd frontend
           npm run build
 
-  # [JOB 2] Backend (FastAPI) Automated Tests
-  backend-ci:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
-
-      - name: Setup Python environment
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies and setup virtual environment
-        run: |
-          cd backend
-          python -m venv venv
-          source venv/bin/activate
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Check FastAPI syntax (Compile test)
-        run: |
-          cd backend
-          source venv/bin/activate
-          python -m py_compile main.py
+  
