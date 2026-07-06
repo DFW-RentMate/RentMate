@@ -1,6 +1,9 @@
+import { error } from 'console';
 import ClientOnly from './components/ClientOnly';
 import Container from './components/Container';
 import EmptyState from './components/EmptyState';
+import ErrorState from './error';
+import toast from 'react-hot-toast';
 
 export default function Home() {
   return (
@@ -11,6 +14,8 @@ export default function Home() {
     // </ClientOnly>
     <div className="h-[80vh]">
       <EmptyState
+        showReset={true}
+        useIcon={true}
         title="조건에 맞는 결과가 없습니다."
         subtitle="필터 설정을 조정하시거나 검색 조건을 변경해보세요"
       />
