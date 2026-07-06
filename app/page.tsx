@@ -1,3 +1,9 @@
+import Container from './components/Container';
+
 export default function Home() {
-  return <div>RoomRent</div>;
+  return (
+    <Container>
+      <div className="bg-amber-500">TestTestTestTestTestTestTestTestTest</div>
+    </Container>
+  );
 }
