@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
 // 1. 네가 만든 Navbar 임포트 유지
-import Navbar from '@/app/components/Navbar';
+import Navbar from '@/app/components/navbar/Navbar';
 // 2. 팀원이 만든 컴포넌트 임포트 유지
 import ClientOnly from './components/ClientOnly';
 import ToastProvider from './provider/ToastProvider';

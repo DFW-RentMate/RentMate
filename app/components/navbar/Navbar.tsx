@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Home, Heart, ChevronDown, Plus } from 'lucide-react';
 import { useState } from 'react';
-import MenuItem from './navbar/MenuItem';
+import MenuItem from './MenuItem';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
@@ -25,7 +25,6 @@ export default function Navbar() {
             <Home size={20} strokeWidth={2.5} />
           </div>
 
-          {/* Brand Text */}
           <div className="flex flex-col ">
             <span className="text-xl font-extrabold text-gray-900 tracking-tight leading-none">
               RoomRent DFW
@@ -36,7 +35,6 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Center Section: Navigation Links (Hidden on mobile) */}
         <div className="hidden md:flex items-center space-x-8 text-[15px] font-semibold text-gray-700">
           <Link
             href="/listings"
@@ -54,9 +52,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Right Section: Action Buttons and User Profile */}
       <div className="flex items-center space-x-5">
-        {/* Create Listing Button */}
         <Link href="/listings/new">
           <button className="flex items-center px-4 py-2 text-sm font-semibold text-white transition-colors bg-[#FF6B4A] rounded-full hover:bg-[#E55A39] cursor-pointer">
             <Plus size={16} strokeWidth={3} className="mr-1.5" />
@@ -67,16 +63,13 @@ export default function Navbar() {
           </button>
         </Link>
 
-        {/* Favorites Icon with Notification Badge */}
         <button className="relative p-1 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
           <Heart size={26} strokeWidth={1.5} className="hover:fill-[#FF6B4A]" />
-          {/* Badge */}
           <span className="absolute -top-1 -right-1 flex items-center justify-center w-[18px] h-[18px] text-[10px] font-bold text-white bg-[#FF6B4A] rounded-full border-2 border-white">
             3
           </span>
         </button>
 
-        {/* User Profile Dropdown */}
         <button
           className="relative flex items-center space-x-1.5 p-1 rounded-full hover:bg-gray-50 transition-colors"
           onClick={clickUserBar}
@@ -98,6 +91,13 @@ export default function Navbar() {
           )}
         </button>
       </div>
+
+      {/* <div className="flex items-center px-4 py-2 text-sm font-semibold text-black transition-colors bg-neutral-100 rounded-xl cursor-pointer hover:bg-neutral-200">
+        로그인{' '}
+        <span className="ml-1.5 font-normal opacity-90 text-[13px] text-neutral-400">
+          Log in
+        </span>
+      </div> */}
     </nav>
   );
 }
