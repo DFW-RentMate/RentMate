@@ -1,13 +1,20 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5ede6; /* 베이지 배경 */
+  --primary: #e8603a; /* 코랄 오렌지 - 버튼, 강조색 */
+  --card: #ffffff; /* 카드 배경 */
+  --muted: #ede5df; /* 연한 배경 - 사진 없을 때 등 */
+  --border: #e0d5ce; /* 테두리 색 */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

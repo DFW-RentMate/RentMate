@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -5,6 +8,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -31,43 +35,43 @@ model listing_photos {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model listings {
-  id                   String                    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  owner_id             String                    @db.Uuid
-  title                String                    @db.VarChar
+  id                   String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  owner_id             String                  @db.Uuid
+  title                String                  @db.VarChar
   description          String?
   room_type            room_type_enum
-  rent_price           Decimal                   @db.Decimal(10, 2)
-  deposit              Decimal?                  @default(0.00) @db.Decimal(10, 2)
-  move_in_date         DateTime?                 @db.Date
-  contact_phone        String?                   @db.VarChar
-  contact_kakao        String?                   @db.VarChar
-  address_raw          String?                   @db.VarChar
+  rent_price           Decimal                 @db.Decimal(10, 2)
+  deposit              Decimal?                @default(0.00) @db.Decimal(10, 2)
+  move_in_date         DateTime?               @db.Date
+  contact_phone        String?                 @db.VarChar
+  contact_kakao        String?                 @db.VarChar
+  address_raw          String?                 @db.VarChar
   location             Unsupported("geography")?
-  city                 String?                   @db.VarChar
+  city                 String?                 @db.VarChar
   gender_preference    preference_gender_enum?
-  pets_allowed         Boolean?                  @default(false)
-  smoking_allowed      Boolean?                  @default(false)
-  parking_available    Boolean?                  @default(false)
-  furnished            Boolean?                  @default(false)
-  electricity_included Boolean?                  @default(false)
-  water_included       Boolean?                  @default(false)
-  gas_included         Boolean?                  @default(false)
-  internet_included    Boolean?                  @default(false)
-  trash_included       Boolean?                  @default(false)
-  has_washer           Boolean?                  @default(false)
-  has_dryer            Boolean?                  @default(false)
-  has_refrigerator     Boolean?                  @default(false)
-  has_ac               Boolean?                  @default(false)
-  has_heating          Boolean?                  @default(false)
-  has_tv               Boolean?                  @default(false)
-  amenities_etc        String?                   @db.VarChar
-  status               listing_status_enum?      @default(active)
-  created_at           DateTime?                 @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime?                 @default(now()) @db.Timestamptz(6)
-  expires_at           DateTime?                 @db.Timestamptz(6)
+  pets_allowed         Boolean?                @default(false)
+  smoking_allowed      Boolean?                @default(false)
+  parking_available    Boolean?                @default(false)
+  furnished            Boolean?                @default(false)
+  electricity_included Boolean?                @default(false)
+  water_included       Boolean?                @default(false)
+  gas_included         Boolean?                @default(false)
+  internet_included    Boolean?                @default(false)
+  trash_included       Boolean?                @default(false)
+  has_washer           Boolean?                @default(false)
+  has_dryer            Boolean?                @default(false)
+  has_refrigerator     Boolean?                @default(false)
+  has_ac               Boolean?                @default(false)
+  has_heating          Boolean?                @default(false)
+  has_tv               Boolean?                @default(false)
+  amenities_etc        String?                 @db.VarChar
+  status               listing_status_enum?    @default(active)
+  created_at           DateTime?               @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?               @default(now()) @db.Timestamptz(6)
+  expires_at           DateTime?               @db.Timestamptz(6)
   favorites            favorites[]
   listing_photos       listing_photos[]
-  users                users                     @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users                users                   @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([city], map: "idx_listings_city")
   @@index([location], map: "idx_listings_location", type: Gist)

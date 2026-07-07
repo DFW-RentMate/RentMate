@@ -1,13 +1,26 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/common/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+// 1. 네가 만든 Navbar 임포트 유지
+import Navbar from "@/components/common/Navbar";
+// 2. 팀원이 만든 컴포넌트 임포트 유지
+import ClientOnly from "./components/ClientOnly";
+import ToastProvider from "./provider/ToastProvider";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "RoomRent DFW",
-  description: "DFW Room Rent & Roommate Matching Platform",
+  title: "RentMate",
+  description: "DFW 한인 룸렌트 플랫폼",
 };
 
 export default function RootLayout({
@@ -16,10 +29,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        {/* Globally fixed navigation bar */}
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
+        <ClientOnly>
+          <ToastProvider />
+        </ClientOnly>
+
         <Navbar />
+
         {children}
       </body>
     </html>
