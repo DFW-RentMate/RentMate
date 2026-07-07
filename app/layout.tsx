@@ -1,26 +1,27 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
 
 // 1. 네가 만든 Navbar 임포트 유지
-import Navbar from "@/components/common/Navbar";
+import Navbar from '@/app/components/Navbar';
 // 2. 팀원이 만든 컴포넌트 임포트 유지
-import ClientOnly from "./components/ClientOnly";
-import ToastProvider from "./provider/ToastProvider";
+import ClientOnly from './components/ClientOnly';
+import ToastProvider from './provider/ToastProvider';
+import { Footer } from './components/footer';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "RentMate",
-  description: "DFW 한인 룸렌트 플랫폼",
+  title: 'RentMate',
+  description: 'DFW 한인 룸렌트 플랫폼',
 };
 
 export default function RootLayout({
@@ -39,8 +40,8 @@ export default function RootLayout({
         </ClientOnly>
 
         <Navbar />
-
         {children}
+        <Footer />
       </body>
     </html>
   );
