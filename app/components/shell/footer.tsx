@@ -1,42 +1,36 @@
-import Link from "next/link"
-import { Home } from "lucide-react"
+import Link from "next/link";
+import { Home } from "lucide-react";
 
 // ─────────────────────────────────────────────
 // 타입 및 데이터 정의
 // ─────────────────────────────────────────────
 
 interface FooterLink {
-  href: string
-  label: string
+  href: string;
+  label: string;
 }
 
 const footerLinks: FooterLink[] = [
   { href: "/terms", label: "이용약관" },
   { href: "/privacy", label: "개인정보처리방침" },
   { href: "/contact", label: "문의하기" },
-]
+];
 
 // 좌우 여백 패딩 관리
 const containerCls =
-  "mx-auto w-full max-w-screen-xl px-4 sm:px-6 md:px-10 xl:px-20"
+  "mx-auto w-full max-w-screen-xl px-4 sm:px-6 md:px-10 xl:px-20";
 
 // ─────────────────────────────────────────────
 // Footer 컴포넌트 본체
 // ─────────────────────────────────────────────
 export function Footer() {
-  const currentYear = new Date().getFullYear() 
+  const currentYear = new Date().getFullYear();
 
   return (
-    
     <footer className="border-t border-gray-200 bg-neutral-50">
-
-      
       <div className={containerCls}>
         <div className="flex flex-col gap-6 py-10 md:flex-row md:items-center md:justify-between">
-
           <div className="flex flex-col gap-4">
-            
-           
             <Link href="/" className="flex items-center space-x-3">
               <div className="flex items-center justify-center w-10 h-10 text-white bg-[#FF6B4A] rounded-full">
                 <Home size={20} strokeWidth={2.5} />
@@ -50,8 +44,7 @@ export function Footer() {
                 </span>
               </div>
             </Link>
-            
-            
+
             <p className="max-w-sm text-sm leading-relaxed text-gray-600">
               달라스·포트워스 (DFW) 지역 한인 커뮤니티를 위한
               <br className="hidden sm:block" />
@@ -59,7 +52,6 @@ export function Footer() {
             </p>
           </div>
 
-          
           <nav aria-label="푸터 메뉴">
             <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
               {footerLinks.map((link) => (
@@ -85,7 +77,6 @@ export function Footer() {
           </p>
         </div>
       </div>
-
     </footer>
-  )
+  );
 }

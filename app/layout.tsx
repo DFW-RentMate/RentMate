@@ -3,9 +3,9 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
 // ─────────────────────────────────────────────
-// 컴포넌트  불러오기
+// 컴포넌트 불러오기
 // ─────────────────────────────────────────────
-import Navbar from './components/navbar/Navbar';      
+import Navbar from './components/navbar/Navbar';       
 import ClientOnly from './components/ClientOnly';      // 에러 방지막
 import ToastProvider from './provider/ToastProvider';  // 알림창
 import { Footer } from './components/shell/footer';    
@@ -35,15 +35,14 @@ export default function RootLayout({
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      
       <body className="flex min-h-screen flex-col bg-background">
         
         <ClientOnly>
           <ToastProvider />
         </ClientOnly>
 
+        {/* 메인에 드디어 영준님의 네비바가 들어왔으므로 당당하게 활성화! */}
         <Navbar />
-        
         
         <main className="flex-1">
           {children}
