@@ -6,7 +6,7 @@ import { useState } from 'react';
 import MenuItem from './MenuItem';
 import { useRouter } from 'next/navigation';
 
-export default function Navbar() {
+export default function Navbar()  {
   const [clickOpen, setClickOpen] = useState(false);
   const router = useRouter();
 
