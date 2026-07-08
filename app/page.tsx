@@ -1,6 +1,7 @@
 import ClientOnly from './components/ClientOnly';
 import Container from './components/Container';
 import EmptyState from './components/EmptyState';
+import LoginModal from './components/navbar/LoginModal';
 // 팀원 코드에 있던 불필요한 console error 임포트는 뺐어!
 
 export default function Home() {

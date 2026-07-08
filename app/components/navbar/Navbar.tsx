@@ -5,6 +5,7 @@ import { Home, Heart, ChevronDown, Plus } from 'lucide-react';
 import { useState } from 'react';
 import MenuItem from './MenuItem';
 import { useRouter } from 'next/navigation';
+import LoginModal from './LoginModal';
 
 export default function Navbar() {
   const [clickOpen, setClickOpen] = useState(false);
@@ -16,7 +17,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100 sticky top-0 z-50">
+    <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-200 sticky top-0 z-50">
       {/* Left Section: Logo and Brand */}
       <div className="flex items-center space-x-10">
         <Link href="/" className="flex items-center space-x-3">
@@ -52,7 +53,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="flex items-center space-x-5">
+      {/* <div className="flex items-center space-x-5">
         <Link href="/listings/new">
           <button className="flex items-center px-4 py-2 text-sm font-semibold text-white transition-colors bg-[#FF6B4A] rounded-full hover:bg-[#E55A39] cursor-pointer">
             <Plus size={16} strokeWidth={3} className="mr-1.5" />
@@ -90,14 +91,14 @@ export default function Navbar() {
             </div>
           )}
         </button>
-      </div>
+      </div> */}
 
-      {/* <div className="flex items-center px-4 py-2 text-sm font-semibold text-black transition-colors bg-neutral-100 rounded-xl cursor-pointer hover:bg-neutral-200">
+      <div className="flex items-center border border-neutral-300 px-4 py-2 text-sm font-semibold text-black transition-colors bg-neutral-50 rounded-xl cursor-pointer hover:bg-neutral-100">
         로그인{' '}
         <span className="ml-1.5 font-normal opacity-90 text-[13px] text-neutral-400">
           Log in
         </span>
-      </div> */}
+      </div>
     </nav>
   );
 }
