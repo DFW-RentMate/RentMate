@@ -31,11 +31,11 @@ const Button = ({
           rounded-lg 
           hover:opacity-80 
           transition 
-          w-full 
+          
           ${outline ? 'bg-white' : 'bg-primary'}
           ${outline ? 'text-neutral-600' : 'text-white'}
           ${outline ? 'border border-neutral-300' : ''}
-          ${small ? 'px-4 py-2 text-sm font-semibold' : 'py-3 px-20 text-md font-bold'}
+          ${small ? 'w-35 px-4 py-3 text-sm font-semibold' : 'w-70 py-3 px-20 text-md font-bold'}
           `}
     >
       {label}
