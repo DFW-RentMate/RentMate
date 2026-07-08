@@ -5,7 +5,6 @@ import { Home, Heart, ChevronDown, Plus } from 'lucide-react';
 import { useState } from 'react';
 import MenuItem from './MenuItem';
 import { useRouter } from 'next/navigation';
-import LoginModal from './LoginModal';
 
 export default function Navbar() {
   const [clickOpen, setClickOpen] = useState(false);

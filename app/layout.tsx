@@ -2,12 +2,13 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
-// 1. 네가 만든 Navbar 임포트 유지
-import Navbar from '@/app/components/navbar/Navbar';
-// 2. 팀원이 만든 컴포넌트 임포트 유지
-import ClientOnly from './components/ClientOnly';
-import ToastProvider from './provider/ToastProvider';
-import { Footer } from './components/footer';
+// ─────────────────────────────────────────────
+// 컴포넌트 불러오기
+// ─────────────────────────────────────────────
+import Navbar from './components/navbar/Navbar';       
+import ClientOnly from './components/ClientOnly';      // 에러 방지막
+import ToastProvider from './provider/ToastProvider';  // 알림창
+import { Footer } from './components/shell/footer';    
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -20,8 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'RentMate',
-  description: 'DFW 한인 룸렌트 플랫폼',
+  title: 'RoomRent DFW · 다래방',
+  description: '달라스·포트워스 한인 커뮤니티를 위한 방 렌트 & 룸메이트 매칭 플랫폼',
 };
 
 export default function RootLayout({
@@ -31,17 +32,24 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-screen flex-col bg-background">
+        
         <ClientOnly>
           <ToastProvider />
         </ClientOnly>
 
+        {/* 메인에 드디어 영준님의 네비바가 들어왔으므로 당당하게 활성화! */}
         <Navbar />
-        {children}
+        
+        <main className="flex-1">
+          {children}
+        </main>
+        
         <Footer />
+        
       </body>
     </html>
   );

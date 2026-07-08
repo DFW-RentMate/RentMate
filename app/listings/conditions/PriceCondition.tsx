@@ -2,7 +2,7 @@
 
 import Slider from 'rc-slider';
 import { LuChevronDown } from 'react-icons/lu';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import qs from 'query-string';
 
@@ -11,15 +11,21 @@ interface PriceProps {
 }
 const Price = ({ selected }: PriceProps) => {
   const params = useSearchParams();
+  const minParam = params?.get('min') ?? null;
+  const maxParam = params?.get('max') ?? null;
 
-  const [price, setPrice] = useState([0, 3000]);
+  const [price, setPrice] = useState([
+    Number(minParam) || 0,
+    Number(maxParam) || 3000,
+  ]);
+  const [prevMinParam, setPrevMinParam] = useState(minParam);
+  const [prevMaxParam, setPrevMaxParam] = useState(maxParam);
 
-  useEffect(() => {
-    setPrice([
-      Number(params?.get('min')) || 0,
-      Number(params?.get('max')) || 3000,
-    ]);
-  }, [params]);
+  if (minParam !== prevMinParam || maxParam !== prevMaxParam) {
+    setPrevMinParam(minParam);
+    setPrevMaxParam(maxParam);
+    setPrice([Number(minParam) || 0, Number(maxParam) || 3000]);
+  }
 
   const [showSlider, setShowSlider] = useState(false);
 
