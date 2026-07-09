@@ -2,7 +2,7 @@
 
 import Slider from 'rc-slider';
 import { LuChevronDown } from 'react-icons/lu';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import qs from 'query-string';
 
@@ -11,6 +11,17 @@ interface PriceProps {
 }
 const Price = ({ selected }: PriceProps) => {
   const params = useSearchParams();
+
+  // const [price, setPrice] = useState([0, 3000]);
+
+  // useEffect(() => {
+  //   setPrice([
+  //     Number(params?.get('min')) || 0,
+  //     Number(params?.get('max')) || 3000,
+  //   ]);
+  // }, [params]);
+
+  // 밑에 코드로 수정
   const minParam = params?.get('min') ?? null;
   const maxParam = params?.get('max') ?? null;
 
@@ -51,25 +62,37 @@ const Price = ({ selected }: PriceProps) => {
     router.push(url);
   };
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setShowSlider(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
   return (
-    <div className="relative">
-      <div className="relative flex gap-2 items-center overflow-x-auto">
-        <div
-          className={`
-            flex items-center border py-1 px-3 rounded-2xl cursor-pointer hover:bg-gray-50 font-medium
+    <div className="relative" ref={ref}>
+      <div
+        className={`
+            shadow-xs text-sm flex items-center border py-1 px-3 rounded-2xl cursor-pointer hover:bg-gray-50 font-medium
             ${selected ? 'border-primary' : 'border-gray-200'}
             ${selected ? 'text-primary' : ''}
           `}
-          onClick={() => {
-            setShowSlider(!showSlider);
-          }}
-        >
-          <span>
-            가격 ${price[0]} - ${price[1]}+{' '}
-          </span>
-          <LuChevronDown className="pl-1" size={20} />
-        </div>
+        onClick={() => {
+          setShowSlider(!showSlider);
+        }}
+      >
+        <span>
+          가격 ${price[0]} - ${price[1]}+{' '}
+        </span>
+        <LuChevronDown className="pl-1" size={20} />
       </div>
+
       {showSlider && (
         <div className="absolute w-64 top-10 left-0 bg-white border border-gray-200 rounded-xl shadow-md p-3 z-10">
           <div className="flex justify-between mb-1 text-sm ">

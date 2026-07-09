@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { Home, Heart, ChevronDown, Plus } from 'lucide-react';
 import { useState } from 'react';
 import MenuItem from './MenuItem';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
-export default function Navbar()  {
+export default function Navbar() {
   const [clickOpen, setClickOpen] = useState(false);
-  const router = useRouter();
+
+  const pathname = usePathname();
 
   const clickUserBar = () => {
     setClickOpen(!clickOpen);
@@ -35,16 +36,33 @@ export default function Navbar()  {
           </div>
         </Link>
 
-        <div className="hidden md:flex items-center space-x-8 text-[15px] font-semibold text-gray-700">
+        <div
+          className={
+            'hidden md:flex items-center space-x-8 text-[15px] font-semibold text-gray-700'
+          }
+        >
           <Link
             href="/listings"
-            className="hover:text-[#FF6B4A] hover:bg-neutral-100 p-2 rounded-xl transition-colors flex gap-1.5"
+            className={`
+              hover:text-[#FF6B4A]  p-2 rounded-xl transition-colors flex gap-1.5
+              ${pathname === '/listings' ? 'bg-[#faefec] text-[#FF6B4A]' : 'hover:bg-neutral-100'}
+              `}
           >
-            매물 검색 <span className="text-gray-400 font-normal">Search</span>
+            매물 검색{' '}
+            <span
+              className={`text-gray-400 font-normal
+              
+              `}
+            >
+              Search
+            </span>
           </Link>
           <Link
             href="/roommates"
-            className="hover:text-[#FF6B4A] hover:bg-neutral-100 p-2 rounded-xl transition-colors flex gap-1.5"
+            className={`
+              hover:text-[#FF6B4A] p-2 rounded-xl transition-colors flex gap-1.5
+              ${pathname === '/roommates' ? 'bg-[#faefec] text-[#FF6B4A]' : 'hover:bg-neutral-100'}
+              `}
           >
             룸메이트 찾기{' '}
             <span className="text-gray-400 font-normal">Roommates</span>

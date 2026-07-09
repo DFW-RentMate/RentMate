@@ -4,11 +4,14 @@ import { useSearchParams } from 'next/navigation';
 import CityBox from './conditions/CityBox';
 import 'rc-slider/assets/index.css';
 import Price from './conditions/PriceCondition';
+import RoomType from './conditions/RoomType';
+import OtherConditions from './conditions/OtherConditions';
 
 const ListingPage = () => {
   const params = useSearchParams();
   const city = params?.get('city');
   const price = params?.get('min');
+  const roomType = params?.get('roomType');
 
   return (
     <div className=" flex flex-col  bg-white">
@@ -25,7 +28,11 @@ const ListingPage = () => {
         </div>
 
         {/* 가격 */}
-        <Price selected={price != null} />
+        <div className="flex gap-2">
+          <Price selected={price != null} />
+          <RoomType selected={roomType != null} />
+          <OtherConditions />
+        </div>
       </div>
 
       {/* 밑에 부분 */}
