@@ -29,14 +29,14 @@ export function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-neutral-50">
       <div className={containerCls}>
-        <div className="flex flex-col gap-6 py-10 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6 py-1 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-3">
             <Link href="/" className="flex items-center space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 text-white bg-[#FF6B4A] rounded-full">
-                <Home size={20} strokeWidth={2.5} />
+              <div className="flex items-center justify-center w-8 h-8 text-white bg-[#FF6B4A] rounded-full">
+                <Home size={16} strokeWidth={2.5} />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-extrabold text-gray-900 tracking-tight leading-none">
+                <span className="text-sm font-extrabold text-gray-900 tracking-tight leading-none">
                   RoomRent DFW
                 </span>
                 <span className="text-[11px] text-gray-500 font-medium mt-1">
@@ -45,7 +45,7 @@ export function Footer() {
               </div>
             </Link>
 
-            <p className="max-w-sm text-sm leading-relaxed text-gray-600">
+            <p className="max-w-sm text-xs leading-relaxed text-gray-600">
               달라스·포트워스 (DFW) 지역 한인 커뮤니티를 위한
               <br className="hidden sm:block" />
               방 렌트 &amp; 룸메이트 매칭 플랫폼.
@@ -72,7 +72,7 @@ export function Footer() {
       {/* ── 카피라이트 바 ── */}
       <div className="border-t border-gray-200">
         <div className={containerCls}>
-          <p className="py-4 text-xs text-gray-500">
+          <p className="py-1 text-xs text-gray-500">
             © {currentYear} RoomRent DFW · 다래방. All rights reserved.
           </p>
         </div>
