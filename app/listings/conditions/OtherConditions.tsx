@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LuChevronDown, LuSlidersHorizontal, LuSofa } from 'react-icons/lu';
 import Etc from './Etc';
 import { PiPawPrint } from 'react-icons/pi';
@@ -12,11 +12,26 @@ interface OtherConditionsProps {
 const OtherConditions = ({ selected }: OtherConditionsProps) => {
   const [showConditions, setShowConditions] = useState(false);
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Get all cities in California (US state code 'CA')
+
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setShowConditions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={ref}>
       <div
         className={`
-              shadow-xs text-sm flex items-center border py-1 px-3 rounded-2xl cursor-pointer hover:bg-gray-50 font-medium
+              shadow-sm text-sm flex items-center border py-1 px-3 rounded-2xl cursor-pointer hover:bg-gray-50 
               ${selected ? 'border-primary' : 'border-gray-200'}
               ${selected ? 'text-primary' : ''}
             `}

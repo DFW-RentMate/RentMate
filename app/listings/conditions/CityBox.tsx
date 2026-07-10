@@ -39,7 +39,7 @@ const CityBox = ({ label, selected }: CityBoxProps) => {
     <div
       onClick={handleClick}
       className={`
-        shadow-xs
+        shadow-sm
         border 
         py-1 
         px-2 
@@ -47,6 +47,7 @@ const CityBox = ({ label, selected }: CityBoxProps) => {
         cursor-pointer
         hover:bg-gray-50
         text-sm
+
         ${selected ? 'border-primary ' : 'border-gray-200'}
         ${selected ? 'text-primary' : ''}
         `}

@@ -62,7 +62,7 @@ const RoomType = ({ selected }: RoomTypeProps) => {
     <div className="relative " ref={ref}>
       <div
         className={`
-            shadow-xs text-sm flex items-center border py-1 px-3 rounded-2xl cursor-pointer hover:bg-gray-50 font-medium
+            shadow-sm text-sm flex items-center border py-1 px-3 rounded-2xl cursor-pointer hover:bg-gray-50 
             ${selected ? 'border-primary' : 'border-gray-200'}
             ${selected ? 'text-primary' : ''}
           `}
@@ -74,34 +74,54 @@ const RoomType = ({ selected }: RoomTypeProps) => {
         <LuChevronDown className="pl-1" size={20} />
       </div>
 
-      {showRoomType && (
-        <div className=" flex flex-col w-full absolute bg-white border border-gray-50  rounded-b-2xl text-sm font-medium">
-          <div
-            className="cursor-pointer px-4 py-1 hover:bg-gray-50 transition"
-            onClick={() => handleClick('Private')}
-          >
-            Private
-          </div>
-          <div
-            className="border-t-1 border-gray-100 cursor-pointer px-4 py-1 hover:bg-gray-50 transition"
-            onClick={() => handleClick('Shared')}
-          >
-            Shared
-          </div>
-          <div
-            className="border-t-1 border-gray-100 cursor-pointer px-4 py-1 hover:bg-gray-50 transition"
-            onClick={() => handleClick('Studio')}
-          >
-            Studio
-          </div>
-          <div
-            className="border-t-1 border-gray-100 cursor-pointer px-4 py-1 hover:bg-gray-50 transition"
-            onClick={() => handleClick('Master')}
-          >
-            Master
-          </div>
+      <div
+        className={`p-2
+  flex flex-col w-50 absolute top-9 bg-white border border-gray-100 rounded-xl shadow-md text-sm overflow-hidden
+  transition-all duration-150 ease-out origin-top
+  ${showRoomType ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
+`}
+      >
+        <div
+          className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
+          onClick={() => {
+            setRoomType('룸 타입');
+            setShowRoomType(false);
+            const currentQuery = qs.parse(params?.toString());
+            delete currentQuery.roomType;
+            const url = qs.stringifyUrl(
+              { url: pathname, query: currentQuery },
+              { skipNull: true },
+            );
+            router.push(url);
+          }}
+        >
+          전체 All
         </div>
-      )}
+        <div
+          className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
+          onClick={() => handleClick('개인실')}
+        >
+          개인실 Private
+        </div>
+        <div
+          className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
+          onClick={() => handleClick('셰어')}
+        >
+          셰어 Shared
+        </div>
+        <div
+          className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
+          onClick={() => handleClick('스튜디오')}
+        >
+          스튜디오 Studio
+        </div>
+        <div
+          className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
+          onClick={() => handleClick('마스터룸')}
+        >
+          마스터룸 Master
+        </div>
+      </div>
     </div>
   );
 };
