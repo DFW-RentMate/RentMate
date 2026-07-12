@@ -6,6 +6,8 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '@/components/ui/combobox';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import qs from 'query-string';
 
 const DFW_CITIES = [
   'Carrollton',
@@ -25,6 +27,27 @@ const DFW_CITIES = [
 ];
 
 const Search = () => {
+  const params = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const onClick = (item: string) => {
+    const currentQuery = qs.parse(params?.toString());
+    const updatedQuery = {
+      ...currentQuery,
+      city: item,
+    };
+
+    const url = qs.stringifyUrl(
+      {
+        url: pathname,
+        query: updatedQuery,
+      },
+      { skipNull: true },
+    );
+    router.push(url);
+  };
+
   return (
     <Combobox
       items={DFW_CITIES}
@@ -41,7 +64,7 @@ const Search = () => {
         <ComboboxEmpty>No items found.</ComboboxEmpty>
         <ComboboxList>
           {(item) => (
-            <ComboboxItem key={item} value={item}>
+            <ComboboxItem key={item} value={item} onClick={() => onClick(item)}>
               {item}
             </ComboboxItem>
           )}

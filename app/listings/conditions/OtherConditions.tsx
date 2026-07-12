@@ -1,22 +1,27 @@
 'use client';
+
 import { useEffect, useRef, useState } from 'react';
-import { LuChevronDown, LuSlidersHorizontal, LuSofa } from 'react-icons/lu';
+import { LuChevronDown, LuSlidersHorizontal } from 'react-icons/lu';
 import Etc from './Etc';
-import { PiPawPrint } from 'react-icons/pi';
-import { LucideParkingSquare } from 'lucide-react';
+import Date from './MoveInDate';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import qs from 'query-string';
 
 interface OtherConditionsProps {
   selected?: boolean;
 }
 
 const OtherConditions = ({ selected }: OtherConditionsProps) => {
-  const [showConditions, setShowConditions] = useState(false);
+  const params = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
 
+  const [showConditions, setShowConditions] = useState(false);
+  const [gender, setGender] = useState('');
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Get all cities in California (US state code 'CA')
-
     const handleOutsideClick = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setShowConditions(false);
@@ -26,6 +31,24 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
     document.addEventListener('mousedown', handleOutsideClick);
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
+
+  const clickGender = (g: string) => {
+    const currentQuery = qs.parse(params?.toString()); // URL에서 파라미터 읽기
+    const updatedQuery = {
+      ...currentQuery,
+      gender: g,
+    };
+
+    const url = qs.stringifyUrl(
+      {
+        url: pathname,
+        query: updatedQuery,
+      },
+      { skipNull: true },
+    );
+    setGender(g);
+    router.push(url);
+  };
 
   return (
     <div className="relative" ref={ref}>
@@ -41,17 +64,50 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
         <span>조건</span>
         <LuChevronDown className="ml-1" size={16} />
       </div>
+
       {showConditions && (
-        <div className="absolute flex flex-col top-9 left-0 bg-white w-70 rounded-xl border border-gray-200 shadow-md py-2">
-          <Etc label="반려동물 가능" icon={PiPawPrint} paramKey="pets" />
-          <Etc
-            label="주차 가능"
-            icon={LucideParkingSquare}
-            paramKey="parking"
-          />
-          <Etc label="가구 포함" icon={LuSofa} paramKey="furnished" />
-          <div> 성별 </div>
-          <div> 입주 날짜 </div>
+        <div className="absolute flex flex-col top-9 left-0 bg-white w-70 rounded-xl border border-gray-200 shadow-md py-2 px-4">
+          <div className="text-sm font-medium p-0 m-0">
+            성별 선호 Gender
+            <div className="flex gap-1 justify-between items-center pt-2 pb-4">
+              <div
+                className={`
+                  border border-1 px-6 py-2 rounded-lg cursor-pointer  transition-colors
+                  ${gender === 'all' ? 'bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
+                  `}
+                onClick={() => clickGender('all')}
+              >
+                무관
+              </div>
+              <div
+                className={`
+                  border border-1 px-6 py-2 rounded-lg cursor-pointer transition-colors
+                  ${gender === 'male' ? ' bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
+                  `}
+                onClick={() => clickGender('male')}
+              >
+                남성
+              </div>
+              <div
+                className={`
+                  border border-1 px-6 py-2 rounded-lg cursor-pointer transition-colors
+                  ${gender === 'female' ? ' bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
+                  `}
+                onClick={() => clickGender('female')}
+              >
+                여성
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div className="flex flex-col py-3">
+            <Etc label="반려동물 가능 Pets allowed" paramKey="pets" />
+            <Etc label="주차 가능 Parking" paramKey="parking" />
+            <Etc label="가구 포함 Furnished" paramKey="furnished" />
+          </div>
+
+          <hr className="mb-2 " />
+          <Date />
         </div>
       )}
     </div>

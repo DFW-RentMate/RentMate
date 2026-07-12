@@ -1,27 +1,26 @@
 'use client';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { IconType } from 'react-icons';
 import qs from 'query-string';
+import { LuCheck } from 'react-icons/lu';
 
 interface EtcProps {
   label?: string;
-  icon?: IconType;
   paramKey: string; // 'pets', 'parking', 'furnished'
 }
 
-const Etc = ({ label, icon: Icon, paramKey }: EtcProps) => {
+const Etc = ({ label, paramKey }: EtcProps) => {
   const params = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
-  const value = params?.get(paramKey);
+  const checked = params?.get(paramKey) === 'true';
 
-  const handleClick = (val: boolean) => {
+  const handleClick = () => {
     const currentQuery = qs.parse(params?.toString());
     const updatedQuery = {
       ...currentQuery,
-      [paramKey]: val ? 'true' : 'false',
+      [paramKey]: !checked ? 'true' : 'false',
     };
 
     const url = qs.stringifyUrl(
@@ -33,30 +32,17 @@ const Etc = ({ label, icon: Icon, paramKey }: EtcProps) => {
   };
 
   return (
-    <div className="flex flex-col px-4 py-2">
-      <span className="flex text-sm font-medium my-1 gap-1 px-1 items-center">
-        {Icon && <Icon size={16} />}
-        {label}
-      </span>
-      <div className="flex justify-between items-center border border-gray-200 rounded-xl overflow-hidden text-xs">
-        <div
-          onClick={() => handleClick(true)}
-          className={`flex-1 text-center py-1 cursor-pointer border-r border-gray-200 
-      ${value === 'true' ? 'bg-primary text-white' : 'hover:bg-gray-50'}
-    `}
-        >
-          네
-        </div>
-        <div className="w-[1px] h-full bg-gray-200" />
-        <div
-          onClick={() => handleClick(false)}
-          className={`flex-1 text-center py-1 cursor-pointer 
-      ${value === 'false' ? 'bg-primary text-white' : 'hover:bg-gray-50'}
-    `}
-        >
-          아니요
-        </div>
+    <div className="flex items-center gap-2 cursor-pointer my-1 text-sm">
+      <div
+        onClick={handleClick}
+        className={`
+          w-5 h-5 rounded-full border-1 flex items-center justify-center transition-colors
+          ${checked ? 'border-primary bg-primary' : 'border-gray-300'}
+          `}
+      >
+        {checked && <LuCheck size={13} color="white" />}
       </div>
+      <span>{label}</span>
     </div>
   );
 };
