@@ -5,8 +5,10 @@ import { Home, Heart, ChevronDown, Plus } from 'lucide-react';
 import { useState } from 'react';
 import MenuItem from './MenuItem';
 import { usePathname } from 'next/navigation';
+import useLoginModal from '@/hooks/useLoginModal';
 
 export default function Navbar() {
+  const loginModal = useLoginModal();
   const [clickOpen, setClickOpen] = useState(false);
 
   const pathname = usePathname();
@@ -110,7 +112,11 @@ export default function Navbar() {
         </button>
       </div> */}
 
-      <div className="flex items-center border border-neutral-300 px-4 py-2 text-sm font-semibold text-black transition-colors bg-neutral-50 rounded-xl cursor-pointer hover:bg-neutral-100">
+      
+      <div 
+        onClick={loginModal.onOpen} 
+        className="flex items-center border border-neutral-300 px-4 py-2 text-sm font-semibold text-black transition-colors bg-neutral-50 rounded-xl cursor-pointer hover:bg-neutral-100"
+      >
         로그인{' '}
         <span className="ml-1.5 font-normal opacity-90 text-[13px] text-neutral-400">
           Log in
