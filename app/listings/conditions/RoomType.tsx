@@ -14,18 +14,11 @@ const RoomType = ({ selected }: RoomTypeProps) => {
   const params = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+  const roomType = params?.get('roomType') || '룸 타입';
 
   const [showRoomType, setShowRoomType] = useState(false);
-  const [roomType, setRoomType] = useState(
-    params?.get('roomType') || '룸 타입',
-  );
-
-  useEffect(() => {
-    setRoomType(params?.get('roomType') || '룸 타입');
-  }, [params]);
 
   const handleClick = (type: string) => {
-    setRoomType(type);
     setShowRoomType(false);
 
     const currentQuery = qs.parse(params?.toString()); // URL에서 파라미터 읽기
@@ -84,7 +77,6 @@ const RoomType = ({ selected }: RoomTypeProps) => {
         <div
           className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
           onClick={() => {
-            setRoomType('룸 타입');
             setShowRoomType(false);
             const currentQuery = qs.parse(params?.toString());
             delete currentQuery.roomType;

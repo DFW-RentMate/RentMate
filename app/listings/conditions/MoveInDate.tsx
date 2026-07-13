@@ -42,10 +42,7 @@ const MoveInDate = () => {
             }
           }}
         />
-        <PiCalendarDotsDuotone
-          size={22}
-          className="absolute top-2 right-2 cursor-pointer"
-        />
+        <PiCalendarDotsDuotone size={22} className="absolute top-2 right-2" />
       </div>
     </div>
   );

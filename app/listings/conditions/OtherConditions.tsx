@@ -17,8 +17,9 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
+  const gender = params?.get('gender');
+
   const [showConditions, setShowConditions] = useState(false);
-  const [gender, setGender] = useState('');
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
       },
       { skipNull: true },
     );
-    setGender(g);
+
     router.push(url);
   };
 
