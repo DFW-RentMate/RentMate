@@ -1,14 +1,14 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
-@import 'tailwindcss';
-/*@import 'pretendard/dist/web/static/pretendard.css';*/
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
+@import 'tailwindcss';
+/*@import 'pretendard/dist/web/static/pretendard.css';*/
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
   /* 베이지 배경 */
-  --primary: #e8603a; /* 코랄 오렌지 - 버튼, 강조색 */
+  --primary: #f96f50; /* 코랄 오렌지 - 버튼, 강조색 */
   --card: oklch(1 0 0); /* 카드 배경 */
   --muted: oklch(0.97 0 0); /* 연한 배경 - 사진 없을 때 등 */
   --border: oklch(0.922 0 0); /* 테두리 색 */
@@ -25,7 +25,7 @@
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --input: oklch(0.922 0 0);
-  --ring: #e8603a;
+  --ring: #f96f50;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);

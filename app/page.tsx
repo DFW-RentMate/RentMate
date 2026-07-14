@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { FiSearch } from "react-icons/fi";
-import { TbUserSearch } from "react-icons/tb";
-import HeroMapSection from "./HeroMapSection";
+import { useRouter } from 'next/navigation';
+import { FiSearch } from 'react-icons/fi';
+import { TbUserSearch } from 'react-icons/tb';
+import HeroMapSection from './HeroMapSection';
 
 export default function Home() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function Home() {
         {/* 좌측: 타이틀 및 버튼 (왼쪽으로 바짝 붙도록 너비 고정) */}
         <div className="w-full lg:max-w-[550px] xl:max-w-[650px] shrink-0 flex flex-col items-start gap-6">
           <span className="bg-primary text-[#ffebec] text-sm font-semibold px-3 py-1 rounded-full">
-            다래방 · DFW 한인 커뮤니티
+            DFW 한인 커뮤니티
           </span>
 
           <h1 className="text-5xl lg:text-[54px] font-extrabold text-gray-900 leading-tight tracking-tight">
@@ -33,18 +33,18 @@ export default function Home() {
             렌트 플랫폼입니다.
           </p>
 
-          <div className="flex items-center gap-3 mt-2">
+          <div className="flex items-center gap-3 mt-2 ">
             <button
-              onClick={() => router.push("/listings")}
-              className="flex items-center justify-center gap-2 bg-primary hover:bg-[#e8603a] text-white h-11 px-6 rounded-lg text-[15px] font-medium shadow-sm transition-all"
+              onClick={() => router.push('/listings')}
+              className="flex items-center  w-40 justify-center gap-2 bg-primary hover:bg-[#e8603a] text-white h-11 px-6 rounded-lg text-[15px] font-medium transition-all shadow-[0_4px_20px_rgba(232,96,58,0.4)] cursor-pointer "
             >
               <FiSearch className="w-4 h-4" />
               매물 검색
             </button>
 
             <button
-              onClick={() => router.push("/roommates")}
-              className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 h-11 px-6 rounded-lg text-[15px] font-bold shadow-sm transition-all"
+              onClick={() => router.push('/roommates')}
+              className="flex items-center w-40 justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 border  border-gray-50 h-11 px-6 rounded-lg text-[15px] font-bold shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all cursor-pointer"
             >
               <TbUserSearch className="w-4 h-4" />
               룸메이트 찾기
@@ -57,20 +57,20 @@ export default function Home() {
             </span>
             <div className="flex flex-wrap gap-2">
               {[
-                "Richardson",
-                "Plano",
-                "Allen",
-                "Frisco",
-                "Carrollton",
-                "Dallas",
-                "Irving",
-                "Denton",
-                "Arlington",
-                "Lewisville",
-                "McKinney",
-                "Coppell",
-                "Garland",
-                "기타 DFW 지역",
+                'Richardson',
+                'Plano',
+                'Allen',
+                'Frisco',
+                'Carrollton',
+                'Dallas',
+                'Irving',
+                'Denton',
+                'Arlington',
+                'Lewisville',
+                'McKinney',
+                'Coppell',
+                'Garland',
+                '기타 DFW 지역',
               ].map((city) => (
                 <span
                   key={city}

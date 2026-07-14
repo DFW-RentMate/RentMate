@@ -35,18 +35,31 @@ const ListingPage = () => {
               <Search />
             </div>
           </div>
+          <div className="flex gap-2 flex-wrap items-center ml-2">
+            <Price selected={price != null} />
+            <RoomType selected={roomType != null} />
+            <OtherConditions selected={otherSelected} />
+            <span
+              className="text-sm text-gray-500  mt-1 hover:text-gray-600 hover:underline cursor-pointer"
+              onClick={() => {
+                router.push(pathname);
+              }}
+            >
+              초기화
+            </span>
+          </div>
           {/* 도시 */}
-          <div className="flex gap-2 items-center overflow-x-auto pb-1">
+          {/* <div className="flex gap-2 items-center overflow-x-auto pb-1">
             <CityBox label="Richardson" selected={city === 'Richardson'} />
             <CityBox label="Plano" selected={city === 'Plano'} />
             <CityBox label="Allen" selected={city === 'Allen'} />
             <CityBox label="Frisco" selected={city === 'Frisco'} />
             <CityBox label="Carrollton" selected={city === 'Carrollton'} />
-          </div>
+          </div> */}
         </div>
 
         {/* 가격, 룸 타입, 조건*/}
-        <div className="flex gap-2 flex-wrap items-center">
+        {/* <div className="flex gap-2 flex-wrap items-center">
           <Price selected={price != null} />
           <RoomType selected={roomType != null} />
           <OtherConditions selected={otherSelected} />
@@ -58,7 +71,7 @@ const ListingPage = () => {
           >
             초기화
           </span>
-        </div>
+        </div> */}
       </div>
 
       {/* 밑에 부분 */}
