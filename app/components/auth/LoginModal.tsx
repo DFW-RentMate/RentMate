@@ -44,7 +44,7 @@ export default function LoginModal() {
               RoomRent <span className="text-[#FF6B4A]">DFW</span>
             </span>
             <span className="text-[10px] text-gray-500 font-medium mt-0.5">
-              다래방 · 달라스 한인 렌트
+              달라스 한인 렌트
             </span>
           </div>
         </div>
