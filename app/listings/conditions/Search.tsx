@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Combobox,
   ComboboxContent,
@@ -10,6 +12,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import qs from 'query-string';
 
 const DFW_CITIES = [
+  '전체',
   'Carrollton',
   'Richardson',
   'Plano',
@@ -30,18 +33,21 @@ const Search = () => {
   const params = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+  const currentCity = params?.get('city') || '';
 
   const onClick = (item: string) => {
     const currentQuery = qs.parse(params?.toString());
-    const updatedQuery = {
-      ...currentQuery,
-      city: item,
-    };
+
+    if (item === '전체') {
+      delete currentQuery.city; // 전체 선택시 param 삭제
+    } else {
+      currentQuery.city = item;
+    }
 
     const url = qs.stringifyUrl(
       {
         url: pathname,
-        query: updatedQuery,
+        query: currentQuery,
       },
       { skipNull: true },
     );
@@ -50,7 +56,9 @@ const Search = () => {
 
   return (
     <Combobox
+      key={currentCity}
       items={DFW_CITIES}
+      value={currentCity}
       onValueChange={(value) => {
         // 선택 후 input blur
         (document.activeElement as HTMLElement)?.blur();

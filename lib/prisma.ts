@@ -1,10 +1,11 @@
-import { PrismaClient } from '@prisma/client';
+import 'server-only';
+import { PrismaClient } from '@/app/generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 const prismaClientSingleton = () => {
-  return new PrismaClient({
-    // 여기에 DB 주소를 직접 넘겨주는 방식으로 변경!
-    datasourceUrl: process.env.DATABASE_URL,
-  });
+  const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+
+  return new PrismaClient({ adapter });
 };
 
 declare global {

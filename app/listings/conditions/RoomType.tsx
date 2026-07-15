@@ -68,7 +68,7 @@ const RoomType = ({ selected }: RoomTypeProps) => {
       </div>
 
       <div
-        className={`p-2
+        className={`p-2 z-10
   flex flex-col w-50 absolute top-9 bg-white border border-gray-100 rounded-xl shadow-md text-sm overflow-hidden
   transition-all duration-150 ease-out origin-top
   ${showRoomType ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}

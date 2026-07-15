@@ -33,21 +33,19 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
-  const clickGender = (g: string) => {
-    const currentQuery = qs.parse(params?.toString()); // URL에서 파라미터 읽기
-    const updatedQuery = {
-      ...currentQuery,
-      gender: g,
-    };
+  const clickGender = (g: string | null) => {
+    const currentQuery = qs.parse(params?.toString());
+
+    if (currentQuery.gender === g) {
+      delete currentQuery.gender; // 같은 버튼 다시 누르면 취소
+    } else {
+      currentQuery.gender = g;
+    }
 
     const url = qs.stringifyUrl(
-      {
-        url: pathname,
-        query: updatedQuery,
-      },
+      { url: pathname, query: currentQuery },
       { skipNull: true },
     );
-
     router.push(url);
   };
 
@@ -67,34 +65,42 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
       </div>
 
       {showConditions && (
-        <div className="absolute flex flex-col top-9 left-0 bg-white w-70 rounded-xl border border-gray-200 shadow-md py-2 px-4">
+        <div className="absolute z-10 flex flex-col top-9 left-0 bg-white w-70 rounded-xl border border-gray-200 shadow-md py-2 px-4">
           <div className="text-sm font-medium p-0 m-0">
             성별 선호 Gender
             <div className="flex gap-1 justify-between items-center pt-2 pb-4">
               <div
                 className={`
                   border border-1 px-6 py-2 rounded-lg cursor-pointer  transition-colors
-                  ${gender === 'all' ? 'bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
+                  ${!gender ? 'bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
                   `}
-                onClick={() => clickGender('all')}
+                onClick={() => {
+                  const currentQuery = qs.parse(params?.toString());
+                  delete currentQuery.gender;
+                  const url = qs.stringifyUrl(
+                    { url: pathname, query: currentQuery },
+                    { skipNull: true },
+                  );
+                  router.push(url);
+                }}
               >
                 무관
               </div>
               <div
                 className={`
                   border border-1 px-6 py-2 rounded-lg cursor-pointer transition-colors
-                  ${gender === 'male' ? ' bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
+                  ${gender === 'M' ? ' bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
                   `}
-                onClick={() => clickGender('male')}
+                onClick={() => clickGender('M')}
               >
                 남성
               </div>
               <div
                 className={`
                   border border-1 px-6 py-2 rounded-lg cursor-pointer transition-colors
-                  ${gender === 'female' ? ' bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
+                  ${gender === 'F' ? ' bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
                   `}
-                onClick={() => clickGender('female')}
+                onClick={() => clickGender('F')}
               >
                 여성
               </div>

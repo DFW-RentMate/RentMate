@@ -20,7 +20,7 @@ const Etc = ({ label, paramKey }: EtcProps) => {
     const currentQuery = qs.parse(params?.toString());
     const updatedQuery = {
       ...currentQuery,
-      [paramKey]: !checked ? 'true' : 'false',
+      [paramKey]: !checked ? 'true' : null,
     };
 
     const url = qs.stringifyUrl(
@@ -36,7 +36,7 @@ const Etc = ({ label, paramKey }: EtcProps) => {
       <div
         onClick={handleClick}
         className={`
-          w-5 h-5 rounded-full border-1 flex items-center justify-center transition-colors
+          w-5 h-5 rounded-full border-1 flex items-center justify-center transition-colors hover:border-primary
           ${checked ? 'border-primary bg-primary' : 'border-gray-300'}
           `}
       >
