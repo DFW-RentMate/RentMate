@@ -1,21 +1,20 @@
-import getListings from '@/app/actions/getListings';
 import ListCard from './ListCard';
-import type {
-  IListingsParams,
-  ListingWithPhotos,
-} from '@/app/actions/getListings';
 import EmptyState from '@/app/components/EmptyState';
 import { SafeListing } from '@/app/types';
 
-const Lists = async ({ searchParams }: { searchParams: IListingsParams }) => {
-  const listings = await getListings(searchParams);
+interface listCardProps {
+  listings: SafeListing[];
+  selectedId?: string | null;
+  onHover?: (id: string | null) => void;
+}
 
+const Lists = ({ listings, selectedId, onHover }: listCardProps) => {
   if (listings.length === 0) {
     return (
       <div className="bg-[#fefbf8]">
         <EmptyState
           useIcon={true}
-          title={'죄송합니다. 조건에 맞는 룸을 찾지 못했습니다. '}
+          title={'죄송합니다. 조건에 맞는 방을 찾지 못했습니다. '}
           subtitle={'필터 설정을 조정하시거나, 검색 조건을 변경해 보세요.'}
           showReset={true}
         />
@@ -35,9 +34,14 @@ const Lists = async ({ searchParams }: { searchParams: IListingsParams }) => {
         </div>
       </div>
 
-      <div className="flex flex-col  overflow-y-auto gap-2">
+      <div className="flex flex-col  overflow-y-auto gap-2 py-1">
         {listings.map((listing: SafeListing) => (
-          <ListCard key={listing.id} listing={listing} />
+          <ListCard
+            key={listing.id}
+            listing={listing}
+            isSelected={selectedId === listing.id}
+            onHover={onHover}
+          />
         ))}
       </div>
     </div>
