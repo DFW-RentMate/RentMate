@@ -1,7 +1,7 @@
 import NextAuth, { type NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import KakaoProvider from 'next-auth/providers/kakao';
-import prisma from '@/lib/prisma';   
+import prisma from '@/lib/prisma';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -18,38 +18,54 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: 'jwt' },
 
   callbacks: {
-  async signIn({ user, account }) {
-    if (!user.email || !account) return false;
+    // 로그인 성공 직후: users 테이블에 저장 (있으면 갱신, 없으면 생성)
+    async signIn({ user, account }) {
+      if (!user.email || !account) return false;
 
-    // ⚠️ TODO: DATABASE_URL 받으면 아래 주석 다시 풀기
-    // try {
-    //   await prisma.users.upsert({
-    //     where: { email: user.email },
-    //     update: { ... },
-    //     create: { ... },
-    //   });
-    // } catch (error) {
-    //   console.error('signIn callback error:', error);
-    //   return false;
-    // }
+      try {
+        await prisma.users.upsert({
+          where: { email: user.email },
+          update: {
+            name: user.name ?? undefined,
+            profile_photo_url: user.image ?? undefined,
+            updated_at: new Date(),
+          },
+          create: {
+            email: user.email,
+            name: user.name ?? null,
+            profile_photo_url: user.image ?? null,
+            auth_provider: account.provider as 'google' | 'kakao',
+            auth_provider_id: account.providerAccountId,
+          },
+        });
+        return true;
+      } catch (error) {
+        console.error('signIn callback error:', error);
+        return false;
+      }
+    },
 
-    return true;  // 임시: DB 저장 없이 로그인만 허용
+    // JWT에 DB 유저 id 심기
+    async jwt({ token, account }) {
+      if (account && token.email) {
+        const dbUser = await prisma.users.findUnique({
+          where: { email: token.email },
+          select: { id: true },
+        });
+        if (dbUser) token.userId = dbUser.id;
+      }
+      return token;
+    },
+
+    // 세션에서 user.id 접근 가능하게
+    async session({ session, token }) {
+      if (session.user && token.userId) {
+        (session.user as typeof session.user & { id: string }).id =
+          token.userId as string;
+      }
+      return session;
+    },
   },
-
-  async jwt({ token, account }) {
-    // ⚠️ TODO: DB 연결되면 여기도 살리기
-    // if (account && token.email) {
-    //   const dbUser = await prisma.users.findUnique({ ... });
-    //   if (dbUser) token.userId = dbUser.id;
-    // }
-    return token;
-  },
-
-  async session({ session, token }) {
-    // token.userId 없으니 이 부분도 지금은 비활성
-    return session;
-  },
-},
 
   secret: process.env.NEXTAUTH_SECRET,
 };
