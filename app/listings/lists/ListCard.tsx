@@ -1,8 +1,8 @@
 'use client';
-import { listing_photos, listings } from '@/app/generated/prisma/client';
+
 import Image from 'next/image';
-import type { ListingWithPhotos } from '@/app/actions/getListings';
 import { Heart } from 'lucide-react';
+import { SafeListing } from '@/app/types';
 
 const ROOM_TYPE_LABEL: Record<string, string> = {
   Private: '개인실 Private',
@@ -12,14 +12,22 @@ const ROOM_TYPE_LABEL: Record<string, string> = {
 };
 
 interface listCardProps {
-  listing: ListingWithPhotos;
+  listing: SafeListing;
+  isSelected: boolean;
+  onHover?: (id: string | null) => void;
 }
 
-const ListCard = ({ listing }: listCardProps) => {
+const ListCard = ({ listing, isSelected, onHover }: listCardProps) => {
   const photoUrl = listing.listing_photos?.[0]?.url;
 
   return (
-    <div className="flex gap-3 px-2 items-center bg-white w-full h-36 border border-gray-200 rounded-2xl shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-pointer sm:gap-4 overflow-hidden">
+    <div
+      onMouseEnter={() => onHover?.(listing.id)}
+      onMouseLeave={() => onHover?.(null)}
+      className={`flex gap-3 px-2 items-center bg-white w-full h-36 border border-gray-200 rounded-2xl shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-pointer sm:gap-4 overflow-hidden
+        ${isSelected ? 'border-primary' : 'border-gray-200'}
+        `}
+    >
       <div className="relative w-32 h-32 shrink-0  ">
         <Image
           src={photoUrl || '/placeholder.jpg'}

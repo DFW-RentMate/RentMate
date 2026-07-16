@@ -1,12 +1,20 @@
 'use client';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { SafeListing } from '../../types';
 import 'rc-slider/assets/index.css';
-import Price from './conditions/PriceCondition';
-import RoomType from './conditions/RoomType';
-import OtherConditions from './conditions/OtherConditions';
-import Search from './conditions/Search';
+import Price from '../conditions/PriceCondition';
+import RoomType from '../conditions/RoomType';
+import OtherConditions from '../conditions/OtherConditions';
+import Search from '../conditions/Search';
+import dynamic from 'next/dynamic';
+import Lists from './Lists';
+import { useState } from 'react';
 
-const ListingPage = ({ children }: { children: React.ReactNode }) => {
+const MapComponent = dynamic(() => import('../map/Map'), {
+  ssr: false,
+});
+
+const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -18,6 +26,8 @@ const ListingPage = ({ children }: { children: React.ReactNode }) => {
   const date = params?.get('date');
   const gender = params?.get('gender');
   const otherSelected = !!(gender || pets || parking || furnished || date);
+
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   return (
     <div className="flex flex-col bg-white">
@@ -43,9 +53,19 @@ const ListingPage = ({ children }: { children: React.ReactNode }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 h-screen">
-        {children}
-        <div className="sticky top-0 h-screen">map</div>
+      <div className="grid grid-cols-2">
+        <Lists
+          listings={listings}
+          selectedId={selectedId}
+          onHover={setSelectedId}
+        />
+        <div className="sticky  aspect-square overflow-hidden">
+          <MapComponent
+            listings={listings}
+            selectedId={selectedId}
+            onMarkerClick={setSelectedId}
+          />
+        </div>
       </div>
     </div>
   );

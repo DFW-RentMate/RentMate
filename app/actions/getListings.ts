@@ -26,7 +26,7 @@ const ROOM_TYPE_MAP: Record<string, room_type_enum> = {
   마스터룸: room_type_enum.Master_Bedroom,
 };
 
-export default async function getListings(
+export async function getListings(
   params: IListingsParams = {},
 ): Promise<SafeListing[]> {
   const { city, min, max, roomType, gender, parking, furnished, date } = params;

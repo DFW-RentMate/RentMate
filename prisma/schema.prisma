@@ -47,6 +47,8 @@ model listings {
   address_raw          String?                 @db.VarChar
   location             Unsupported("geography")?
   city                 String?                 @db.VarChar
+  latitude             Float?
+  longitude            Float?
   gender_preference    preference_gender_enum?
   pets_allowed         Boolean?                @default(false)
   smoking_allowed      Boolean?                @default(false)

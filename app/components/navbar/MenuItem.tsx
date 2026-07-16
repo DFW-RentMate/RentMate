@@ -1,17 +1,15 @@
 interface MenuItemProps {
   label: string;
-  onClick?: () => void;
+  onClick?: () => void;   
 }
 
-const MenuItem = ({ label, onClick }: MenuItemProps) => {
+export default function MenuItem({ label, onClick }: MenuItemProps) {
   return (
     <div
-      className="px-4 py-2 hover:bg-neutral-100 transition cursor-pointer"
-      onClick={onClick}
+      onClick={onClick}    
+      className="px-4 py-3 hover:bg-neutral-100 transition font-semibold text-sm cursor-pointer"
     >
       {label}
     </div>
   );
-};
-
-export default MenuItem;
+}

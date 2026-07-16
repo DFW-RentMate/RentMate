@@ -1,5 +1,5 @@
-import { IListingsParams } from '../actions/getListings';
-import ListingPage from './ListingPage';
+import { IListingsParams, getListings } from '../actions/getListings';
+import ListingPage from './lists/ListingPage';
 import Lists from './lists/Lists';
 
 interface ListsProps {
@@ -8,9 +8,7 @@ interface ListsProps {
 
 export default async function Page({ searchParams }: ListsProps) {
   const params = await searchParams;
-  return (
-    <ListingPage>
-      <Lists searchParams={params} />
-    </ListingPage>
-  );
+  const listings = await getListings(params);
+
+  return <ListingPage listings={listings} />;
 }
