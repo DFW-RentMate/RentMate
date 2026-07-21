@@ -135,3 +135,14 @@ body {
     @apply font-sans;
   }
 }
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: auto !important;
+}
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  overflow: hidden;
+  border-radius: 16px !important;
+}

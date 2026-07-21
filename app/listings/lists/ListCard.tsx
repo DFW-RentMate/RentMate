@@ -22,6 +22,7 @@ const ListCard = ({ listing, isSelected, onHover }: listCardProps) => {
 
   return (
     <div
+      id={`listing-${listing.id}`}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}
       className={`flex gap-3 px-2 items-center bg-white w-full h-36 border border-gray-200 rounded-2xl shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-pointer sm:gap-4 overflow-hidden
@@ -36,7 +37,7 @@ const ListCard = ({ listing, isSelected, onHover }: listCardProps) => {
           className="w-full h-full object-cover rounded-2xl"
         />
       </div>
-      <div className="flex flex-col justify-between self-stretch py-2 w-full">
+      <div className="flex flex-col justify-between self-stretch py-2 flex-1 min-w-0">
         <div className="flex items-center justify-between">
           <div className="mt-1 w-fit bg-[#FBE7DC] py-[2px] rounded-2xl px-2 h-auto text-xs text-[#b63d29] ">
             {ROOM_TYPE_LABEL[listing.room_type]}
@@ -47,11 +48,11 @@ const ListCard = ({ listing, isSelected, onHover }: listCardProps) => {
           />
         </div>
 
-        <div className="flex flex-col">
-          <div className=" h-auto text-md font-semibold line-clamp-2">
+        <div className="flex flex-col min-w-0">
+          <div className=" h-auto text-md font-semibold line-clamp-2 leading-tight">
             {listing.title}
           </div>
-          <div className="h-auto text-sm text-gray-400 font-light">
+          <div className="h-auto text-sm text-gray-400 font-light truncate">
             {listing.city} · TX{' '}
             {listing.address_raw ? `(${listing.address_raw} 인근)` : ''}
           </div>

@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { Home } from "lucide-react";
+import Link from 'next/link';
+import { Home } from 'lucide-react';
 
 // ─────────────────────────────────────────────
 // 타입 및 데이터 정의
@@ -11,14 +11,14 @@ interface FooterLink {
 }
 
 const footerLinks: FooterLink[] = [
-  { href: "/terms", label: "이용약관" },
-  { href: "/privacy", label: "개인정보처리방침" },
-  { href: "/contact", label: "문의하기" },
+  { href: '/terms', label: '이용약관' },
+  { href: '/privacy', label: '개인정보처리방침' },
+  { href: '/contact', label: '문의하기' },
 ];
 
 // 좌우 여백 패딩 관리
 const containerCls =
-  "mx-auto w-full max-w-screen-xl px-4 sm:px-6 md:px-10 xl:px-20";
+  'mx-auto w-full max-w-screen-xl px-4 sm:px-6 md:px-10 xl:px-20';
 
 // ─────────────────────────────────────────────
 // Footer 컴포넌트 본체
@@ -27,7 +27,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-gray-200 bg-neutral-50">
+    <footer className="border-t border-gray-200 bg-neutral-50 py-3">
       <div className={containerCls}>
         <div className="flex flex-col gap-6 py-1 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-3">
@@ -47,8 +47,8 @@ export function Footer() {
 
             <p className="max-w-sm text-xs leading-relaxed text-gray-600">
               달라스·포트워스 (DFW) 지역 한인 커뮤니티를 위한
-              <br className="hidden sm:block" />
-              방 렌트 &amp; 룸메이트 매칭 플랫폼.
+              <br className="hidden sm:block" />방 렌트 &amp; 룸메이트 매칭
+              플랫폼.
             </p>
           </div>
 
@@ -73,7 +73,7 @@ export function Footer() {
       <div className="border-t border-gray-200">
         <div className={containerCls}>
           <p className="py-1 text-xs text-gray-500">
-            © {currentYear} RoomRent DFW · 다래방. All rights reserved.
+            © {currentYear} RoomRent DFW · All rights reserved.
           </p>
         </div>
       </div>

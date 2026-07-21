@@ -23,7 +23,7 @@ const Lists = ({ listings, selectedId, onHover }: listCardProps) => {
   }
 
   return (
-    <div className="p-4 bg-[#fefbf8]">
+    <div className="p-4 bg-[#fefbf8] overflow-scroll">
       <div className="flex ml-1 mb-2 gap-1">
         <div className="text-sm text-black font-semibold">
           {listings.length}개

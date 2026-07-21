@@ -8,7 +8,7 @@ import OtherConditions from '../conditions/OtherConditions';
 import Search from '../conditions/Search';
 import dynamic from 'next/dynamic';
 import Lists from './Lists';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const MapComponent = dynamic(() => import('../map/Map'), {
   ssr: false,
@@ -27,15 +27,24 @@ const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
   const gender = params?.get('gender');
   const otherSelected = !!(gender || pets || parking || furnished || date);
 
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [clickedId, setClickedId] = useState<string | null>(null);
+
+  const activeId = hoveredId ?? clickedId;
+  useEffect(() => {
+    if (clickedId) {
+      const el = document.getElementById(`listing-${clickedId}`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [clickedId]);
 
   return (
-    <div className="flex flex-col bg-white">
-      <div className="flex flex-col border-b border-gray-200 px-10 py-3 gap-2 md:px-10">
+    <div className="flex flex-col bg-white h-screen">
+      <div className="flex flex-col border-y border-gray-300 px-10 py-3 gap-2 md:px-10">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
             <span className="text-neutral-400 pr-1 shrink-0">도시</span>
-            <div className="w-60 border border-background rounded-xl">
+            <div className="w-70 border border-background rounded-xl">
               <Search />
             </div>
           </div>
@@ -53,17 +62,20 @@ const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 flex-1 overflow-hidden ">
         <Lists
           listings={listings}
-          selectedId={selectedId}
-          onHover={setSelectedId}
+          selectedId={activeId}
+          onHover={setHoveredId}
         />
-        <div className="sticky  aspect-square overflow-hidden">
+        <div className="h-full isolate">
           <MapComponent
             listings={listings}
-            selectedId={selectedId}
-            onMarkerClick={setSelectedId}
+            selectedId={activeId}
+            onMarkerClick={(id) =>
+              setClickedId((prev) => (prev === id ? null : id))
+            }
+            onMarkerHover={setHoveredId}
           />
         </div>
       </div>

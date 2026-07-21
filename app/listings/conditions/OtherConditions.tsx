@@ -65,7 +65,7 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
       </div>
 
       {showConditions && (
-        <div className="absolute z-10 flex flex-col top-9 left-0 bg-white w-70 rounded-xl border border-gray-200 shadow-md py-2 px-4">
+        <div className="absolute z-15 flex flex-col top-9 left-0 bg-white w-70 rounded-xl border border-gray-200 shadow-md py-2 px-4">
           <div className="text-sm font-medium p-0 m-0">
             성별 선호 Gender
             <div className="flex gap-1 justify-between items-center pt-2 pb-4">
