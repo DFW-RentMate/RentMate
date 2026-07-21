@@ -40,7 +40,7 @@ const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
 
   return (
     <div className="flex flex-col bg-white h-screen">
-      <div className="flex flex-col border-y border-gray-300 px-10 py-3 gap-2 md:px-10">
+      <div className="flex flex-col border-b border-gray-300 px-10 py-3 gap-2 md:px-10">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
             <span className="text-neutral-400 pr-1 shrink-0">도시</span>
@@ -62,13 +62,13 @@ const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 flex-1 overflow-hidden ">
+      <div className="grid grid-cols-1 md:grid-cols-2 flex-1 overflow-hidden">
         <Lists
           listings={listings}
           selectedId={activeId}
           onHover={setHoveredId}
         />
-        <div className="h-full isolate">
+        <div className="h-full isolate overflow-hidden hidden md:block">
           <MapComponent
             listings={listings}
             selectedId={activeId}

@@ -23,14 +23,14 @@ export default function Navbar() {
   // ★ 매물 등록 클릭: 로그인 여부에 따라 분기
   const handleCreateListing = () => {
     if (session) {
-      router.push('/listings/new');   // 로그인 → 등록 페이지로
+      router.push('/listings/new'); // 로그인 → 등록 페이지로
     } else {
-      loginModal.onOpen();            // 비로그인 → 로그인 모달
+      loginModal.onOpen(); // 비로그인 → 로그인 모달
     }
   };
 
   return (
-    <nav className="flex items-center justify-between px-8 py-3 bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+    <nav className="flex items-center justify-between px-8 py-3 bg-white/80 backdrop-blur-md border-b border-gray-300 sticky top-0 z-50">
       {/* ── Left: 로고 + 네비 링크 ── */}
       <div className="flex items-center space-x-10">
         <Link href="/" className="flex items-center space-x-3">
