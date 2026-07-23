@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Heart } from 'lucide-react';
 import { SafeListing } from '@/app/types';
+import { useRouter } from 'next/navigation';
 
 const ROOM_TYPE_LABEL: Record<string, string> = {
   Private: '개인실 Private',
@@ -19,12 +20,14 @@ interface listCardProps {
 
 const ListCard = ({ listing, isSelected, onHover }: listCardProps) => {
   const photoUrl = listing.listing_photos?.[0]?.url;
+  const router = useRouter();
 
   return (
     <div
       id={`listing-${listing.id}`}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}
+      onClick={() => router.push(`/listings/${listing.id}`)}
       className={`flex gap-3 px-2 items-center bg-white w-full h-36 border border-gray-200 rounded-2xl shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-pointer sm:gap-4 overflow-hidden
         ${isSelected ? 'border-primary' : 'border-gray-200'}
         `}
