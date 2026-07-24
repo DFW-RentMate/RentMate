@@ -19,6 +19,7 @@ import {
 import {} from 'lucide-react';
 import BackButton from './BackButton';
 import Badge from './Badge';
+import PhotoGallery from './PhotoGallery';
 
 const ROOM_TYPE_LABEL: Record<string, string> = {
   Private: '개인실 Private',
@@ -117,14 +118,14 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   ];
 
   return (
-    <div className="flex justify-center bg-[#fffbf8] min-h-screen px-8 py-6 gap-10">
+    <div className="flex flex-col md:flex-row justify-center bg-[#fffbf8] min-h-screen px-8 gap-10">
       {/* 왼쪽 매물 정보 */}
 
       <div className="flex justify-center bg-[#fffbf8] flex-1 max-w-3xl">
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full">
           <BackButton />
-
-          <div className="flex gap-3 items-center">
+          <PhotoGallery photos={photos ?? []} />
+          <div className="flex gap-3 items-center mt-4">
             <div className="w-fit bg-[#FBE7DC] py-[2px] rounded-2xl px-2 h-auto text-sm text-[#b63d29] ">
               {ROOM_TYPE_LABEL[searchList.room_type]}
             </div>
@@ -158,7 +159,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           <hr className="my-2" />
           <div className="font-medium text-lg">
             입주조건 Conditions
-            <div className="grid grid-cols-3 gap-3 mt-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
               {conditions.map(({ label, icon, active }) => (
                 <div
                   key={label}
@@ -167,7 +168,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                   <span className={active ? 'text-primary' : 'text-gray-300'}>
                     {icon}
                   </span>
-                  <span className="text-sm">{label}</span>
+                  <span className="text-sm break-keep">{label}</span>
                 </div>
               ))}
             </div>
@@ -236,7 +237,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
       </div>
 
       {/* 오른쪽 sticky 카드 */}
-      <div className="w-80 shrink-0">
+      <div className="w-full md:w-80 shrink-0 mb-10">
         <div className="sticky top-24 border border-gray-200 rounded-2xl p-5 shadow-md bg-white flex flex-col gap-3">
           <div>
             <div className="flex items-baseline gap-1">

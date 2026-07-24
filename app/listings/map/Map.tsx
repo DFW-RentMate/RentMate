@@ -5,6 +5,7 @@ import L from 'leaflet';
 import { SafeListing } from '@/app/types';
 import Image from 'next/image';
 import { Heart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface MapProps {
   listings: SafeListing[];
@@ -37,6 +38,7 @@ const MapComponent = ({
   onMarkerClick,
   onMarkerHover,
 }: MapProps) => {
+  const router = useRouter();
   const createPriceIcon = (price: number, isSelected: boolean) =>
     L.divIcon({
       className: '',
@@ -83,7 +85,10 @@ const MapComponent = ({
             }}
           >
             <Popup offset={[25, 0]}>
-              <div className="flex flex-col   bg-white w-64 overflow-hidden cursor-pointer">
+              <div
+                className="flex flex-col   bg-white w-64 overflow-hidden cursor-pointer"
+                onClick={() => router.push(`/listings/${listing.id}`)}
+              >
                 <div className="relative w-full h-40">
                   <img
                     src={listing.listing_photos?.[0]?.url || '/placeholder.jpg'}

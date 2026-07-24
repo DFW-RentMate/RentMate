@@ -76,6 +76,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800',
+            sort_order: 2,
           },
         ],
       },
@@ -103,6 +112,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=800',
+            sort_order: 2,
           },
         ],
       },
@@ -129,6 +147,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
+            sort_order: 2,
           },
         ],
       },
@@ -155,6 +182,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800',
+            sort_order: 2,
           },
         ],
       },
@@ -181,6 +217,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=800',
+            sort_order: 2,
           },
         ],
       },
@@ -207,6 +252,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800',
+            sort_order: 2,
           },
         ],
       },
@@ -233,6 +287,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800',
+            sort_order: 2,
           },
         ],
       },
@@ -260,6 +323,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
+            sort_order: 2,
           },
         ],
       },
@@ -287,6 +359,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
+            sort_order: 2,
           },
         ],
       },
@@ -313,6 +394,15 @@ async function main() {
         create: [
           {
             url: 'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=800',
+            sort_order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800',
+            sort_order: 1,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800',
+            sort_order: 2,
           },
         ],
       },
