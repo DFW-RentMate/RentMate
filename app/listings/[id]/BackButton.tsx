@@ -7,10 +7,10 @@ const BackButton = () => {
   return (
     <div
       onClick={() => router.push('/listings')}
-      className=" flex gap-1 items-center hover:bg-gray-100 transition-colors cursor-pointer rounded-full w-fit my-4 p-1"
+      className="group flex gap-1 items-center  transition-colors cursor-pointer rounded-full w-fit my-4 p-1"
     >
-      <ChevronLeft size={15} color="#9ca3af" />
-      <span className="text-[#8e857d] font-light text-sm">
+      <ChevronLeft size={15} className="text-gray-400 group-hover:text-black" />
+      <span className="text-[#8e857d] font-light text-sm group-hover:text-black">
         매물 검색으로 Back to search
       </span>
     </div>

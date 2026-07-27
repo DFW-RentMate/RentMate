@@ -20,6 +20,11 @@ import {} from 'lucide-react';
 import BackButton from './BackButton';
 import Badge from './Badge';
 import PhotoGallery from './PhotoGallery';
+import MapWrapper from './MapWrapper';
+import KakaoContact from './KakaoContact';
+import PhoneContact from './PhoneContact';
+import { getFavoriteIds } from '@/app/actions/getFavoriteIds';
+import FavoriteButton from './FavoriteButton';
 
 const ROOM_TYPE_LABEL: Record<string, string> = {
   Private: '개인실 Private',
@@ -32,6 +37,8 @@ const ROOM_TYPE_LABEL: Record<string, string> = {
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const searchList = await getListingById(id);
+  const favoriteIds = await getFavoriteIds();
+  const isFavorited = favoriteIds.includes(id);
   const photos = searchList?.listing_photos;
   const utilities = [
     {
@@ -131,7 +138,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             </div>
             <span className="text-[#8e857d] font-light text-sm">
               {' '}
-              {`등록일 ${searchList.created_at?.toISOString().slice(0, 10)}`}
+              {`등록일 ${searchList.created_at?.slice(0, 10)}`}
             </span>
           </div>
 
@@ -228,16 +235,17 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             <div className="text-sm ">{searchList.description}</div>
           </div>
 
-          <div>
-            <div className="font-medium text-lg mt-4">위치</div>
+          <div className="flex flex-col gap-2 justify-center w-full ">
+            <div className="font-medium text-lg mt-4 ">위치</div>
+            <div className="rounded-2xl overflow-hidden">
+              <MapWrapper listing={searchList} />
+            </div>
           </div>
         </div>
-        {/* 연락처 */}
-        <div></div>
       </div>
 
       {/* 오른쪽 sticky 카드 */}
-      <div className="w-full md:w-80 shrink-0 mb-10">
+      <div className="w-full md:w-80 shrink-0 mb-10 mt-18">
         <div className="sticky top-24 border border-gray-200 rounded-2xl p-5 shadow-md bg-white flex flex-col gap-3">
           <div>
             <div className="flex items-baseline gap-1">
@@ -251,14 +259,18 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             </div>
           </div>
 
-          <div className="w-full border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-2 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
-            <Heart size={18} />
-            찜하기
-          </div>
+          <FavoriteButton
+            listingId={searchList.id}
+            initialFavorited={isFavorited}
+          />
 
-          <div className="w-full bg-[#FEE500] rounded-xl py-3 font-semibold text-[#3C1E1E] flex items-center justify-center gap-2  cursor-pointer hover:bg-[#F0D900] transition-colors">
-            카카오톡으로 문의
-          </div>
+          {searchList.contact_kakao && (
+            <KakaoContact kakaoId={searchList.contact_kakao} />
+          )}
+
+          {searchList.contact_phone && (
+            <PhoneContact phone={searchList.contact_phone} />
+          )}
 
           <p className="text-xs text-[#8e857d] text-center">
             연락 시 안전거래 수칙을 확인하세요.
