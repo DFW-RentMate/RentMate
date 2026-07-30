@@ -89,11 +89,12 @@ export default function Navbar() {
           // ══════════ 로그인 상태 ══════════
           <>
             {/* 찜 목록 하트 */}
-            <button className="relative p-1 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
+            <button className="relative p-1 cursor-pointer">
               <Heart
                 size={26}
                 strokeWidth={1.5}
-                className="hover:fill-[#FF6B4A]"
+                className="hover:fill-[#FF6B4A] hover:text-primary transition-colors"
+                onClick={() => router.push('/favorites')}
               />
             </button>
 

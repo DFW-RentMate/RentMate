@@ -14,7 +14,13 @@ const MapComponent = dynamic(() => import('../map/Map'), {
   ssr: false,
 });
 
-const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
+const ListingPage = ({
+  listings,
+  favorites,
+}: {
+  listings: SafeListing[];
+  favorites: string[];
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -34,9 +40,19 @@ const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
   useEffect(() => {
     if (clickedId) {
       const el = document.getElementById(`listing-${clickedId}`);
-      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [clickedId]);
+
+  const [favoritedIds, setFavoritedIds] = useState<string[]>(favorites);
+
+  const handleFavoriteToggle = (id: string, result: boolean) => {
+    if (result) {
+      setFavoritedIds((prev) => [...prev, id]);
+    } else {
+      setFavoritedIds((prev) => prev.filter((fid) => fid !== id));
+    }
+  };
 
   return (
     <div className="flex flex-col bg-white h-screen">
@@ -52,12 +68,14 @@ const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
             <Price selected={price != null} />
             <RoomType selected={roomType != null} />
             <OtherConditions selected={otherSelected} />
-            <span
-              className="text-sm text-gray-500 mt-1 hover:text-gray-600 hover:underline cursor-pointer"
-              onClick={() => router.push(pathname)}
-            >
-              초기화
-            </span>
+            {(price || roomType || otherSelected) && (
+              <span
+                className="text-sm text-gray-500 mt-1 hover:text-gray-600 hover:underline cursor-pointer"
+                onClick={() => router.push(pathname)}
+              >
+                초기화
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -67,6 +85,8 @@ const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
           listings={listings}
           selectedId={activeId}
           onHover={setHoveredId}
+          favoriteIds={favoritedIds}
+          onFavoriteToggle={handleFavoriteToggle}
         />
         <div className="h-full isolate overflow-hidden hidden md:block">
           <MapComponent
@@ -76,6 +96,7 @@ const ListingPage = ({ listings }: { listings: SafeListing[] }) => {
               setClickedId((prev) => (prev === id ? null : id))
             }
             onMarkerHover={setHoveredId}
+            favoriteIds={favoritedIds}
           />
         </div>
       </div>

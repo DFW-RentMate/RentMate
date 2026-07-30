@@ -5,10 +5,18 @@ import { SafeListing } from '@/app/types';
 interface listCardProps {
   listings: SafeListing[];
   selectedId?: string | null;
+  favoriteIds: string[];
+  onFavoriteToggle: (id: string, result: boolean) => void;
   onHover?: (id: string | null) => void;
 }
 
-const Lists = ({ listings, selectedId, onHover }: listCardProps) => {
+const Lists = ({
+  listings,
+  selectedId,
+  onHover,
+  favoriteIds,
+  onFavoriteToggle,
+}: listCardProps) => {
   if (listings.length === 0) {
     return (
       <div className="bg-[#fefbf8]">
@@ -41,6 +49,8 @@ const Lists = ({ listings, selectedId, onHover }: listCardProps) => {
             listing={listing}
             isSelected={selectedId === listing.id}
             onHover={onHover}
+            isFavorited={favoriteIds.includes(listing.id)}
+            onFavoriteToggle={onFavoriteToggle}
           />
         ))}
       </div>

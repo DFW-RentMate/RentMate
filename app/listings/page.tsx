@@ -1,3 +1,4 @@
+import { getFavoriteIds } from '../actions/getFavoriteIds';
 import { IListingsParams, getListings } from '../actions/getListings';
 import ListingPage from './lists/ListingPage';
 import Lists from './lists/Lists';
@@ -9,6 +10,7 @@ interface ListsProps {
 export default async function Page({ searchParams }: ListsProps) {
   const params = await searchParams;
   const listings = await getListings(params);
+  const favoriteIds = await getFavoriteIds();
 
-  return <ListingPage listings={listings} />;
+  return <ListingPage listings={listings} favorites={favoriteIds} />;
 }

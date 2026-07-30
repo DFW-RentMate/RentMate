@@ -6,38 +6,26 @@ import { SafeListing } from '@/app/types';
 import Image from 'next/image';
 import { Heart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toggleFavorite } from '@/app/actions/toggleFavorite';
 
 interface MapProps {
   listings: SafeListing[];
   selectedId: string | null;
   onMarkerClick: (id: string | null) => void;
   onMarkerHover: (id: string | null) => void;
+  favoriteIds: string[];
 }
-
-const createPriceIcon = (price: number) =>
-  L.divIcon({
-    className: '',
-    html: `<div style="
-      display: inline-block;
-      background: #f96f50;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 50px;
-      font-size: 11px;
-      font-weight: 500;
-      white-space: nowrap;
-      border: 2px solid white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    ">$${price}</div>`,
-    iconSize: [0, 0],
-  });
 
 const MapComponent = ({
   listings,
   selectedId,
   onMarkerClick,
   onMarkerHover,
+  favoriteIds,
 }: MapProps) => {
+  const [favoritedIds, setFavoritedIds] = useState<string[]>(favoriteIds);
+
   const router = useRouter();
   const createPriceIcon = (price: number, isSelected: boolean) =>
     L.divIcon({
@@ -103,8 +91,11 @@ const MapComponent = ({
                       ${Number(listing.rent_price).toLocaleString()}
                     </span>
                     <Heart
-                      size={22}
-                      className="text-gray-400 hover:text-primary cursor-pointer"
+                      className={
+                        favoriteIds.includes(listing.id)
+                          ? 'fill-red-500 text-red-500'
+                          : 'text-gray-400'
+                      }
                     />
                   </div>
                   {/* 방 타입 */}
