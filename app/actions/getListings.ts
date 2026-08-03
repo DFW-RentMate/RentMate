@@ -20,10 +20,10 @@ export interface IListingsParams {
 }
 
 const ROOM_TYPE_MAP: Record<string, room_type_enum> = {
-  개인실: room_type_enum.Private,
-  쉐어룸: room_type_enum.Shared,
-  스튜디오: room_type_enum.Studio,
-  마스터룸: room_type_enum.Master_Bedroom,
+  Private: room_type_enum.Private,
+  Shared: room_type_enum.Shared,
+  Studio: room_type_enum.Studio,
+  Master_Bedroom: room_type_enum.Master_Bedroom,
 };
 
 export async function getListings(
