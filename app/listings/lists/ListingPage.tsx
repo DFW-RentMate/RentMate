@@ -32,6 +32,7 @@ const ListingPage = ({
   const date = params?.get('date');
   const gender = params?.get('gender');
   const otherSelected = !!(gender || pets || parking || furnished || date);
+  const hasFilter = !!(price || roomType || otherSelected);
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [clickedId, setClickedId] = useState<string | null>(null);
@@ -68,7 +69,7 @@ const ListingPage = ({
             <Price selected={price != null} />
             <RoomType selected={roomType != null} />
             <OtherConditions selected={otherSelected} />
-            {(price || roomType || otherSelected) && (
+            {hasFilter && (
               <span
                 className="text-sm text-gray-500 mt-1 hover:text-gray-600 hover:underline cursor-pointer"
                 onClick={() => router.push(pathname)}

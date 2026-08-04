@@ -31,6 +31,7 @@ export interface ListingFormData {
   title: string;
   address: string;
   city: string;
+  zipCode: string;
   rentPrice: string;
   deposit: string;
   moveInDate: string;
@@ -66,6 +67,7 @@ const INITIAL_FORM: ListingFormData = {
   title: '',
   address: '',
   city: '',
+  zipCode: '',
   rentPrice: '',
   deposit: '',
   moveInDate: '',

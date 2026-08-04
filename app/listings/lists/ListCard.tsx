@@ -65,7 +65,9 @@ const ListCard = ({
             size={20}
             onClick={handleFavorite}
             className={
-              isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-400'
+              isFavorited
+                ? 'fill-red-500 text-red-500'
+                : 'text-gray-400 hover:fill-red-500 hover:text-red-500 transition-colors'
             }
           />
         </div>

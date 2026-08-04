@@ -10,11 +10,19 @@ interface RoomTypeProps {
   selected?: boolean;
 }
 
+const ROOM_TYPE_LABEL: Record<string, string> = {
+  Private: '개인실 Private',
+  Shared: '쉐어룸 Shared',
+  Studio: '스튜디오 Studio',
+  Master_Bedroom: '마스터룸 Master',
+};
+
 const RoomType = ({ selected }: RoomTypeProps) => {
   const params = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-  const roomType = params?.get('roomType') || '룸 타입';
+  const roomType = params?.get('roomType');
+  const roomTypeLabel = roomType ? ROOM_TYPE_LABEL[roomType] : '룸 타입';
 
   const [showRoomType, setShowRoomType] = useState(false);
 
@@ -63,7 +71,7 @@ const RoomType = ({ selected }: RoomTypeProps) => {
           setShowRoomType(!showRoomType);
         }}
       >
-        <span>{roomType}</span>
+        <span>{roomTypeLabel}</span>
         <LuChevronDown className="pl-1" size={20} />
       </div>
 
@@ -91,25 +99,25 @@ const RoomType = ({ selected }: RoomTypeProps) => {
         </div>
         <div
           className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
-          onClick={() => handleClick('개인실')}
+          onClick={() => handleClick('Private')}
         >
           개인실 Private
         </div>
         <div
           className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
-          onClick={() => handleClick('셰어')}
+          onClick={() => handleClick('Shared')}
         >
-          셰어 Shared
+          쉐어룸 Shared
         </div>
         <div
           className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
-          onClick={() => handleClick('스튜디오')}
+          onClick={() => handleClick('Studio')}
         >
           스튜디오 Studio
         </div>
         <div
           className="cursor-pointer px-4 py-2 hover:bg-[#faefec] transition-colors rounded-xl"
-          onClick={() => handleClick('마스터룸')}
+          onClick={() => handleClick('Master_Bedroom')}
         >
           마스터룸 Master
         </div>
