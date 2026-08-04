@@ -1,8 +1,8 @@
-import Link from "next/link";
 import ProfileCard from "./ProfileCard";
 import { IRoommateParams } from "../page";
 import { PrismaClient } from "../../generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { getServerSession } from "next-auth"; // 💡 1. 현재 로그인 세션 확인용 import
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -14,8 +14,30 @@ interface RoommateListsProps {
 export default async function RoommateLists({
   searchParams,
 }: RoommateListsProps) {
+  // 💡 2. 현재 로그인한 사용자 세션 및 유저 ID 조회
+  const session = await getServerSession();
+  let currentUserId: string | null = null;
+
+  if (session?.user?.email) {
+    const currentUser = await prisma.users.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
+    if (currentUser) {
+      currentUserId = currentUser.id;
+    }
+  }
+
+  // 3. 룸메이트 프로필 및 로그인 유저의 찜 내역 같이 가져오기
   const dbProfiles = await prisma.roommate_profiles.findMany({
-    include: { users: true },
+    include: {
+      users: true,
+      roommate_favorites: currentUserId
+        ? {
+            where: { user_id: currentUserId },
+          }
+        : false,
+    },
   });
 
   const profiles = dbProfiles.map((p) => {
@@ -30,6 +52,10 @@ export default async function RoommateLists({
           ? "남성 선호"
           : "여성 선호";
 
+    // 💡 4. 현재 유저가 찜한 데이터가 배열에 존재하는지 여부로 isLiked 결정
+    const isLiked =
+      Array.isArray(p.roommate_favorites) && p.roommate_favorites.length > 0;
+
     return {
       id: p.id,
       initial: user?.name ? user.name.charAt(0) : "?",
@@ -40,7 +66,7 @@ export default async function RoommateLists({
       minBudget: Number(p.budget_min),
       maxBudget: Number(p.budget_max),
       bio: p.self_intro || "안녕하세요! 룸메이트를 찾고 있습니다.",
-      isLiked: false,
+      isLiked, // 💡 실제 DB 찜 여부 반영
     };
   });
 
@@ -77,29 +103,24 @@ export default async function RoommateLists({
         · 룸메이트 프로필
       </div>
 
-      {/* 💡 그리드 정렬 수정: h-full을 사용하여 모든 카드가 같은 높이를 갖도록 설정 */}
+      {/* 💡 그리드 정렬: 외부 Link를 걷어내고 id={profile.id}를 완벽하게 전달 */}
       {filteredProfiles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProfiles.map((profile) => (
-            <Link
-              key={profile.id}
-              href={`/roommates/${profile.id}`}
-              className="block h-full"
-            >
-              <div className="h-full">
-                <ProfileCard
-                  initial={profile.initial}
-                  name={profile.name}
-                  age={profile.age}
-                  city={profile.city}
-                  preference={profile.preference}
-                  minBudget={profile.minBudget}
-                  maxBudget={profile.maxBudget}
-                  bio={profile.bio}
-                  isLiked={profile.isLiked}
-                />
-              </div>
-            </Link>
+            <div key={profile.id} className="h-full">
+              <ProfileCard
+                id={profile.id} // 🔥 핵심! 에러를 해결하는 id 프롭스 전달
+                initial={profile.initial}
+                name={profile.name}
+                age={profile.age}
+                city={profile.city}
+                preference={profile.preference}
+                minBudget={profile.minBudget}
+                maxBudget={profile.maxBudget}
+                bio={profile.bio}
+                isLiked={profile.isLiked}
+              />
+            </div>
           ))}
         </div>
       ) : (

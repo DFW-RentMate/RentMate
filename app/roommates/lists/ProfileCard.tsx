@@ -1,6 +1,13 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link"; // 💡 상세 페이지 이동을 위한 Link import
 import { FiHeart, FiMapPin } from "react-icons/fi";
+import { useSession } from "next-auth/react";
+import useLoginModal from "@/hooks/useLoginModal";
 
 interface ProfileCardProps {
+  id: string; // 💡 DB 저장 및 대상 식별을 위해 꼭 필요한 프로필 ID
   initial: string;
   name: string;
   age: number;
@@ -13,6 +20,7 @@ interface ProfileCardProps {
 }
 
 export default function ProfileCard({
+  id,
   initial,
   name,
   age,
@@ -23,8 +31,53 @@ export default function ProfileCard({
   bio,
   isLiked = false,
 }: ProfileCardProps) {
+  const { data: session } = useSession();
+  const loginModal = useLoginModal();
+
+  // 💡 1. 찜하기 상태 관리 (초기값은 DB에서 받아온 isLiked)
+  const [liked, setLiked] = useState(isLiked);
+
+  // 💡 2. 하트 버튼 클릭 핸들러 (이벤트 버블링 차단 + API 연동)
+  const handleLikeClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    // 🔥 상위 <Link> 태그의 페이지 이동 이벤트를 완벽하게 차단!
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 로그인하지 않은 사용자는 전역 로그인 모달 띄우기
+    if (!session) {
+      loginModal.onOpen();
+      return;
+    }
+
+    // 화면의 하트 UI를 먼저 빠르게 변경 (Optimistic UI)
+    const nextState = !liked;
+    setLiked(nextState);
+
+    // 백엔드 API 호출로 DB에 저장/삭제 반영
+    try {
+      const response = await fetch("/api/roommates/favorites", {
+        method: nextState ? "POST" : "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetProfileId: id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("찜하기 API 요청 실패");
+      }
+    } catch (error) {
+      console.error(error);
+      // 서버 저장 실패 시 하트 색상 롤백
+      setLiked(!nextState);
+      alert("찜하기 처리에 실패했습니다. 다시 시도해 주세요.");
+    }
+  };
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 w-full flex flex-col h-full cursor-pointer">
+    // 🔥 Tailwind 경고 해결: 맨 뒤의 'block'을 제거하고 'flex flex-col'만 유지
+    <Link
+      href={`/roommates/${id}`}
+      className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 w-full flex flex-col h-full cursor-pointer relative"
+    >
       {/* 1. 상단: 아바타, 이름, 나이, 지역, 찜 버튼 */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
@@ -45,8 +98,13 @@ export default function ProfileCard({
           </div>
         </div>
 
-        <button className="text-gray-300 hover:text-[#ff6b4a] transition-colors p-1">
-          {isLiked ? (
+        {/* 💡 찜하기 버튼: handleLikeClick의 preventDefault/stopPropagation으로 링크 이동 방지! */}
+        <button
+          onClick={handleLikeClick}
+          className="text-gray-300 hover:text-[#ff6b4a] transition-colors p-1 relative z-10"
+          aria-label="찜하기"
+        >
+          {liked ? (
             <svg
               className="w-5 h-5 text-[#ff6b4a] fill-current"
               viewBox="0 0 24 24"
@@ -73,6 +131,6 @@ export default function ProfileCard({
           "{bio}"
         </p>
       </div>
-    </div>
+    </Link>
   );
 }

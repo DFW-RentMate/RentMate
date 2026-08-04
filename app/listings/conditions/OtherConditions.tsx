@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { LuChevronDown, LuSlidersHorizontal } from 'react-icons/lu';
-import Etc from './Etc';
-import Date from './MoveInDate';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
-import qs from 'query-string';
+import { useEffect, useRef, useState } from "react";
+import { LuChevronDown, LuSlidersHorizontal } from "react-icons/lu";
+import Etc from "./Etc";
+import Date from "./MoveInDate";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import qs from "query-string";
 
 interface OtherConditionsProps {
   selected?: boolean;
@@ -17,7 +17,7 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const gender = params?.get('gender');
+  const gender = params?.get("gender");
 
   const [showConditions, setShowConditions] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -29,8 +29,8 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
       }
     };
 
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
   const clickGender = (g: string | null) => {
@@ -54,8 +54,8 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
       <div
         className={`
               shadow-sm text-sm flex items-center border py-1 px-3 rounded-2xl cursor-pointer hover:bg-gray-50 
-              ${selected ? 'border-primary' : 'border-gray-200'}
-              ${selected ? 'text-primary' : ''}
+              ${selected ? "border-primary" : "border-gray-200"}
+              ${selected ? "text-primary" : ""}
             `}
         onClick={() => setShowConditions(!showConditions)}
       >
@@ -71,9 +71,9 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
             <div className="flex gap-1 justify-between items-center pt-2 pb-4">
               <div
                 className={`
-                  border border-1 px-6 py-2 rounded-lg cursor-pointer  transition-colors
-                  ${!gender ? 'bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
-                  `}
+                  border px-6 py-2 rounded-lg cursor-pointer transition-colors
+                  ${!gender ? "bg-[#fdd9ce] border-primary" : "bg-white hover:bg-[#fdeae4]"}
+                `}
                 onClick={() => {
                   const currentQuery = qs.parse(params?.toString());
                   delete currentQuery.gender;
@@ -88,19 +88,19 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
               </div>
               <div
                 className={`
-                  border border-1 px-6 py-2 rounded-lg cursor-pointer transition-colors
-                  ${gender === 'M' ? ' bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
-                  `}
-                onClick={() => clickGender('M')}
+                  border px-6 py-2 rounded-lg cursor-pointer transition-colors
+                  ${gender === "M" ? "bg-[#fdd9ce] border-primary" : "bg-white hover:bg-[#fdeae4]"}
+                `}
+                onClick={() => clickGender("M")}
               >
                 남성
               </div>
               <div
                 className={`
-                  border border-1 px-6 py-2 rounded-lg cursor-pointer transition-colors
-                  ${gender === 'F' ? ' bg-[#fdd9ce] border-primary' : 'bg-white hover:bg-[#fdeae4]'}
-                  `}
-                onClick={() => clickGender('F')}
+                  border px-6 py-2 rounded-lg cursor-pointer transition-colors
+                  ${gender === "F" ? "bg-[#fdd9ce] border-primary" : "bg-white hover:bg-[#fdeae4]"}
+                `}
+                onClick={() => clickGender("F")}
               >
                 여성
               </div>
@@ -113,7 +113,7 @@ const OtherConditions = ({ selected }: OtherConditionsProps) => {
             <Etc label="가구 포함 Furnished" paramKey="furnished" />
           </div>
 
-          <hr className="mb-2 " />
+          <hr className="mb-2" />
           <Date />
         </div>
       )}
