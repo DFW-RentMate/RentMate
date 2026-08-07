@@ -3,16 +3,18 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import useLoginModal from "@/hooks/useLoginModal";
+import { FiPhone, FiMail, FiMessageCircle, FiHeart } from "react-icons/fi";
 
 interface ActionSidebarProps {
-  targetProfileId: string; // 💡 스키마 기준 프로필 ID
-  initialIsLiked?: boolean; // 💡 DB에서 불러온 초기값
+  targetProfileId: string;
+  initialIsLiked?: boolean;
   roommateName: string;
   budgetMin: number;
   budgetMax: number;
   city: string;
-  email?: string;
-  kakaoLink?: string;
+  phone?: string | null; // 💡 신규: 휴대폰 번호
+  email?: string | null; // 💡 신규: 이메일 주소
+  kakaoId?: string | null; // 💡 신규: 카카오톡 ID (선택)
 }
 
 export default function ActionSidebar({
@@ -22,14 +24,15 @@ export default function ActionSidebar({
   budgetMin,
   budgetMax,
   city,
-  email = "example@email.com",
-  kakaoLink = "https://open.kakao.com",
+  phone,
+  email,
+  kakaoId,
 }: ActionSidebarProps) {
   const { data: session } = useSession();
   const loginModal = useLoginModal();
 
-  // 💡 DB에서 가져온 값을 초기 상태로 설정
   const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [copiedType, setCopiedType] = useState<string | null>(null);
 
   const handleLikeToggle = async () => {
     if (!session) {
@@ -37,11 +40,9 @@ export default function ActionSidebar({
       return;
     }
 
-    // 1. Optimistic UI (클릭 직후 하트 상태 먼저 변경)
     const nextState = !isLiked;
     setIsLiked(nextState);
 
-    // 2. 서버 API에 찜 추가/취소 요청
     try {
       const response = await fetch("/api/roommates/favorites", {
         method: nextState ? "POST" : "DELETE",
@@ -54,27 +55,24 @@ export default function ActionSidebar({
       }
     } catch (error) {
       console.error(error);
-      // 서버 에러 시 하트 색상 원래대로 되돌리기
       setIsLiked(!nextState);
       alert("찜하기 처리에 실패했습니다. 다시 시도해 주세요.");
     }
   };
 
-  const handleContactClick = () => {
-    if (email) {
-      navigator.clipboard.writeText(email);
-      alert(`${roommateName}님의 이메일(${email})이 복사되었습니다!`);
-    } else {
-      alert("등록된 이메일이 없습니다.");
+  // 💡 클립보드 복사 공통 핸들러 (+ 버튼 시각 피드백)
+  const handleCopy = (text: string, type: string, label: string) => {
+    if (!text) {
+      alert(`등록된 ${label} 정보가 없습니다.`);
+      return;
     }
-  };
+    navigator.clipboard.writeText(text);
+    setCopiedType(type);
+    alert(`${roommateName}님의 ${label}(${text})이(가) 복사되었습니다!`);
 
-  const handleKakaoClick = () => {
-    if (kakaoLink) {
-      window.open(kakaoLink, "_blank");
-    } else {
-      alert("등록된 카카오톡 오픈채팅 링크가 없습니다.");
-    }
+    setTimeout(() => {
+      setCopiedType(null);
+    }, 2000);
   };
 
   return (
@@ -89,33 +87,64 @@ export default function ActionSidebar({
       </div>
 
       <div className="space-y-3">
-        <button
-          onClick={handleContactClick}
-          className="w-full py-3 px-4 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-medium rounded-xl transition shadow-sm flex items-center justify-center gap-2"
-        >
-          <span>💬</span>
-          <span>연락하기</span>
-        </button>
+        {/* 1. 휴대폰 번호 복사 버튼 (필수) */}
+        {phone && (
+          <button
+            onClick={() => handleCopy(phone, "phone", "휴대폰 번호")}
+            className="w-full py-3 px-4 bg-[#ff6b4a] hover:bg-[#e55a3b] active:bg-[#d44d30] text-white font-bold text-sm rounded-xl transition shadow-sm flex items-center justify-center gap-2"
+          >
+            <FiPhone className="w-4 h-4" />
+            <span>
+              {copiedType === "phone"
+                ? "✓ 전화번호 복사 완료!"
+                : "전화번호로 연락하기"}
+            </span>
+          </button>
+        )}
 
-        {/* 찜하기 버튼 */}
+        {/* 2. 이메일 복사 버튼 (필수) */}
+        {email && (
+          <button
+            onClick={() => handleCopy(email, "email", "이메일")}
+            className="w-full py-3 px-4 border border-gray-200 bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 font-bold text-sm rounded-xl transition flex items-center justify-center gap-2"
+          >
+            <FiMail className="w-4 h-4 text-gray-500" />
+            <span>
+              {copiedType === "email"
+                ? "✓ 이메일 복사 완료!"
+                : "이메일로 연락하기"}
+            </span>
+          </button>
+        )}
+
+        {/* 3. 카카오톡 ID 복사 버튼 (입력되어 있을 때만 조건부 표시) */}
+        {kakaoId && (
+          <button
+            onClick={() => handleCopy(kakaoId, "kakao", "카카오톡 ID")}
+            className="w-full py-3 px-4 bg-[#FEE500] hover:bg-[#e6cf00] active:bg-[#d9c400] text-[#191919] font-bold text-sm rounded-xl transition flex items-center justify-center gap-2"
+          >
+            <FiMessageCircle className="w-4 h-4" />
+            <span>
+              {copiedType === "kakao"
+                ? "✓ 카카오톡 ID 복사 완료!"
+                : "카카오톡으로 문의"}
+            </span>
+          </button>
+        )}
+
+        {/* 4. 찜하기 버튼 */}
         <button
           onClick={handleLikeToggle}
-          className={`w-full py-3 px-4 border font-medium rounded-xl transition flex items-center justify-center gap-2 ${
+          className={`w-full py-3 px-4 border font-bold text-sm rounded-xl transition flex items-center justify-center gap-2 ${
             isLiked
               ? "border-red-500 text-red-500 bg-red-50"
               : "border-gray-200 hover:bg-gray-50 text-gray-700"
           }`}
         >
-          <span>{isLiked ? "♥" : "♡"}</span>
+          <FiHeart
+            className={`w-4 h-4 ${isLiked ? "fill-current text-red-500" : ""}`}
+          />
           <span>{isLiked ? "찜 완료" : "찜하기"}</span>
-        </button>
-
-        <button
-          onClick={handleKakaoClick}
-          className="w-full py-3 px-4 bg-[#FEE500] hover:bg-[#e6cf00] text-[#191919] font-medium rounded-xl transition flex items-center justify-center gap-2"
-        >
-          <span>💬</span>
-          <span>카카오톡으로 문의</span>
         </button>
       </div>
 

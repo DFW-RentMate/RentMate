@@ -91,7 +91,6 @@ model roommate_favorites {
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model roommate_profiles {
   id                        String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   user_id                   String                  @db.Uuid
@@ -106,6 +105,13 @@ model roommate_profiles {
   preferred_roommate_gender preference_gender_enum?
   self_intro                String?
   move_in_date              DateTime?               @db.Date
+  age                       Int?                    // 나이 (예: 25)
+  is_age_public             Boolean?                @default(true) // 나이 공개 여부
+  gender                    gender_enum?            // 💡 신규 추가 1: 본인 성별 (M, F, Other)
+  occupation                String?                 // 💡 신규 추가 2: 직업/소속 (예: 대학생, 소프트웨어 엔지니어 등)
+  phone                     String?                 // 💡 신규 추가 3: 연락처 - 휴대폰 번호 (필수 입력 예정)
+  email                     String?                 // 💡 신규 추가 4: 연락처 - 이메일 주소 (필수 입력 예정)
+  kakao_id                  String?                 // 💡 신규 추가 5: 연락처 - 카카오톡 ID (선택)
   matching_active           Boolean?                @default(true)
   created_at                DateTime?               @default(now()) @db.Timestamptz(6)
   updated_at                DateTime?               @default(now()) @db.Timestamptz(6)

@@ -16,7 +16,14 @@ export async function GET() {
 
     const user = await prisma.users.findUnique({
       where: { email: session.user.email },
-      include: { roommate_profiles: true },
+      include: {
+        roommate_profiles: {
+          // 💡 프론트엔드에서 아바타 등 유저 정보를 함께 읽을 수 있도록 include 추가
+          include: {
+            users: true,
+          },
+        },
+      },
     });
 
     const profile =
@@ -71,13 +78,42 @@ export async function POST(req: Request) {
       preferredGender,
       moveInDate,
       selfIntro,
+      age,
+      isAgePublic,
+      // 💡 신규 추가: 성별, 직업, 연락처 3종
+      gender,
+      occupation,
+      phone,
+      email,
+      kakaoId,
+      // 💡 추가: 프로필 사진 URL (선택)
+      profilePhotoUrl,
     } = body;
 
-    if (!desiredCity || !moveInDate || !selfIntro) {
+    // 💡 필수 입력란 검사 강화 (성별, 휴대폰번호, 이메일 필수!)
+    if (
+      !desiredCity ||
+      !moveInDate ||
+      !selfIntro ||
+      !gender ||
+      !phone ||
+      !email
+    ) {
       return NextResponse.json(
-        { error: "필수 입력란을 모두 채워주세요." },
+        {
+          error:
+            "필수 입력란(성별, 지역, 입주희망일, 휴대폰 번호, 이메일 등)을 모두 채워주세요.",
+        },
         { status: 400 }
       );
+    }
+
+    // 💡 1. 전달받은 프로필 사진 URL이 있으면 user 테이블에 반영
+    if (profilePhotoUrl !== undefined) {
+      await prisma.users.update({
+        where: { id: user.id },
+        data: { profile_photo_url: profilePhotoUrl || null },
+      });
     }
 
     const wakeDate = wakeUpTime
@@ -100,6 +136,14 @@ export async function POST(req: Request) {
       preferred_roommate_gender: preferredGender || "Any",
       move_in_date: new Date(moveInDate),
       self_intro: selfIntro,
+      age: age ? Number(age) : null,
+      is_age_public: isAgePublic ?? true,
+      // 💡 DB 컬럼 매핑
+      gender: gender, // 'M' | 'F' | 'Other'
+      occupation: occupation || null, // 직업 (선택)
+      phone: phone, // 휴대폰 번호 (필수)
+      email: email, // 이메일 (필수)
+      kakao_id: kakaoId || null, // 카카오톡 ID (선택)
     };
 
     let savedProfile;

@@ -53,7 +53,7 @@ export default function RoommateFormPage() {
   const [pageLoading, setPageLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  // 💡 폼 상태 관리
+  // 💡 폼 기본 상태 관리
   const [matchingActive, setMatchingActive] = useState(true);
   const [desiredCity, setDesiredCity] = useState("Richardson");
   const [budgetMin, setBudgetMin] = useState(400);
@@ -66,6 +66,22 @@ export default function RoommateFormPage() {
   const [preferredGender, setPreferredGender] = useState("Any");
   const [moveInDate, setMoveInDate] = useState("");
   const [selfIntro, setSelfIntro] = useState("");
+
+  // 💡 나이 및 공개여부 상태
+  const [age, setAge] = useState<number | "">("");
+  const [isAgePublic, setIsAgePublic] = useState(true);
+
+  // 💡 나의 성별, 직업, 연락처 3종 상태
+  const [gender, setGender] = useState("M"); // 나의 성별 (M / F / Other)
+  const [occupation, setOccupation] = useState(""); // 직업 (선택)
+  const [phone, setPhone] = useState(""); // 휴대폰 번호 (필수)
+  const [email, setEmail] = useState(""); // 이메일 주소 (필수)
+  const [kakaoId, setKakaoId] = useState(""); // 카카오톡 ID (선택)
+
+  // 💡 [신규 추가] 프로필 사진 상태 관리
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
 
   // 💡 1. 페이지 진입 시 기존 내 프로필 정보 불러오기
   useEffect(() => {
@@ -87,17 +103,57 @@ export default function RoommateFormPage() {
           setPreferredGender(p.preferred_roommate_gender || "Any");
           setMoveInDate(formatDateForInput(p.move_in_date));
           setSelfIntro(p.self_intro || "");
+
+          // 나이 & 공개여부
+          if (p.age) setAge(Number(p.age));
+          if (p.is_age_public !== undefined && p.is_age_public !== null) {
+            setIsAgePublic(Boolean(p.is_age_public));
+          }
+
+          // 신규 컬럼 불러오기
+          if (p.gender) setGender(p.gender);
+          if (p.occupation) setOccupation(p.occupation);
+          if (p.phone) setPhone(p.phone);
+          if (p.email) setEmail(p.email);
+          if (p.kakao_id) setKakaoId(p.kakao_id);
+
+          // 💡 유저 테이블에 저장된 프로필 사진 URL 불러오기
+          if (p.users?.profile_photo_url) {
+            setProfilePhotoUrl(p.users.profile_photo_url);
+            setImagePreview(p.users.profile_photo_url);
+          }
         }
       })
       .catch((err) => console.error("기존 프로필 로드 실패:", err))
       .finally(() => setPageLoading(false));
   }, []);
 
+  // 💡 사진 선택 핸들러 (5MB 용량 제한 및 미리보기 생성)
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("5MB 이하의 이미지만 업로드 가능합니다.");
+        return;
+      }
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   // 💡 2. 프로필 저장 / 수정 핸들러
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!desiredCity || !moveInDate || !selfIntro.trim()) {
+    // 필수 입력란 검증 (성별, 휴대폰, 이메일 필수!)
+    if (
+      !desiredCity ||
+      !moveInDate ||
+      !selfIntro.trim() ||
+      !gender ||
+      !phone.trim() ||
+      !email.trim()
+    ) {
       alert("필수 항목(*)을 모두 입력해 주세요.");
       return;
     }
@@ -106,8 +162,32 @@ export default function RoommateFormPage() {
       return;
     }
 
+    if (isAgePublic && (!age || age < 18 || age > 99)) {
+      alert("공개할 나이를 정확히 입력해 주세요 (18세 ~ 99세).");
+      return;
+    }
+
     setSubmitting(true);
     try {
+      let finalPhotoUrl = profilePhotoUrl;
+
+      // 💡 새 사진 파일이 선택된 경우 스토리지(/api/upload)에 먼저 업로드
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error("프로필 사진 업로드에 실패했습니다.");
+        }
+        const uploadData = await uploadRes.json();
+        finalPhotoUrl = uploadData.imageUrl;
+      }
+
       const response = await fetch("/api/roommates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -124,6 +204,15 @@ export default function RoommateFormPage() {
           preferredGender,
           moveInDate,
           selfIntro,
+          age: isAgePublic && age ? Number(age) : null,
+          isAgePublic,
+          gender,
+          occupation,
+          phone,
+          email,
+          kakaoId,
+          // 💡 최종 프로필 사진 URL 전송
+          profilePhotoUrl: finalPhotoUrl,
         }),
       });
 
@@ -147,7 +236,7 @@ export default function RoommateFormPage() {
     }
   };
 
-  // 💡 3. 프로필 삭제 핸들러 (수정 모드일 때만 동작)
+  // 💡 3. 프로필 삭제 핸들러
   const handleDelete = async () => {
     if (
       !confirm(
@@ -199,7 +288,6 @@ export default function RoommateFormPage() {
             <FiChevronLeft className="w-4 h-4 mr-1" />
             룸메이트 찾기로 돌아가기
           </Link>
-          {/* 💡 isEditMode에 따른 타이틀 변신 */}
           <h1 className="text-2xl font-extrabold text-gray-900">
             {isEditMode ? "룸메이트 프로필 수정" : "룸메이트 프로필 등록"}
           </h1>
@@ -211,7 +299,7 @@ export default function RoommateFormPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 1. 매칭 노출 ON/OFF 스위치 카운터 */}
+          {/* 1. 매칭 노출 ON/OFF 스위치 */}
           <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-gray-900">
@@ -237,7 +325,219 @@ export default function RoommateFormPage() {
             </button>
           </div>
 
-          {/* 2. 희망 도시 Desired City */}
+          {/* 💡 [신규 추가] 프로필 사진 업로드 (선택) */}
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+            <div className="relative w-24 h-24 rounded-full bg-[#fcefee] text-[#ff6b4a] flex items-center justify-center text-3xl font-bold border-2 border-gray-100 overflow-hidden shrink-0">
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Profile preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span>?</span>
+              )}
+            </div>
+
+            <div className="flex-1 text-center sm:text-left space-y-2">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900">
+                  프로필 사진 (선택)
+                </h3>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  본인을 잘 표현하는 편안한 사진을 등록해 보세요. 사진이 있는
+                  프로필은 연락받을 확률이 훨씬 높아집니다!
+                </p>
+              </div>
+
+              <div className="flex flex-wrap justify-center sm:justify-start gap-2 pt-1">
+                <label className="cursor-pointer px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 transition-colors">
+                  사진 등록 / 변경
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/jpg, image/webp"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+
+                {imagePreview && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setImageFile(null);
+                      setImagePreview("");
+                      setProfilePhotoUrl("");
+                    }}
+                    className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-500 rounded-xl text-xs font-bold transition-colors"
+                  >
+                    사진 삭제
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 2. 본인 기본 정보 (성별 & 직업) */}
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-5">
+            <div>
+              <label className="block text-sm font-bold text-gray-900 mb-3">
+                나의 성별 My gender <span className="text-[#ff6b4a]">*</span>
+              </label>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { label: "남성 Male", value: "M" },
+                  { label: "여성 Female", value: "F" },
+                  { label: "기타 Other", value: "Other" },
+                ].map((item) => (
+                  <button
+                    key={item.value}
+                    type="button"
+                    onClick={() => setGender(item.value)}
+                    className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 border transition-all ${
+                      gender === item.value
+                        ? "bg-[#fff2ef] text-[#ff6b4a] border-[#ff6b4a] font-bold"
+                        : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                    }`}
+                  >
+                    <span
+                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                        gender === item.value
+                          ? "border-[#ff6b4a]"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {gender === item.value && (
+                        <span className="w-2 h-2 rounded-full bg-[#ff6b4a]" />
+                      )}
+                    </span>
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-gray-100">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
+                직업 및 소속 Occupation (선택)
+              </label>
+              <input
+                type="text"
+                placeholder="예: UT Dallas 대학생, 소프트웨어 엔지니어 등"
+                value={occupation}
+                onChange={(e) => setOccupation(e.target.value)}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:outline-none focus:border-[#ff6b4a]"
+              />
+            </div>
+          </div>
+
+          {/* 3. 나이 공개 토글 + 나이 입력 필드 */}
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900">
+                  나이 공개 Age visibility
+                </h3>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  룸메이트 카드에 내 나이를 공개할지 선택할 수 있습니다.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAgePublic(!isAgePublic)}
+                className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ${
+                  isAgePublic ? "bg-[#ff6b4a]" : "bg-gray-200"
+                }`}
+              >
+                <div
+                  className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
+                    isAgePublic ? "translate-x-6" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {isAgePublic && (
+              <div className="pt-2 border-t border-gray-100">
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  나이 (만 나이 또는 연령){" "}
+                  <span className="text-[#ff6b4a]">*</span>
+                </label>
+                <input
+                  type="number"
+                  min={18}
+                  max={99}
+                  placeholder="예: 25"
+                  value={age}
+                  onChange={(e) =>
+                    setAge(e.target.value ? Number(e.target.value) : "")
+                  }
+                  className="w-full sm:w-48 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-bold text-gray-900 focus:outline-none focus:border-[#ff6b4a]"
+                />
+                <span className="text-xs text-gray-400 ml-2">세</span>
+              </div>
+            )}
+          </div>
+
+          {/* 4. 연락처 정보 (전화번호, 이메일, 카카오톡) */}
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-gray-900">
+                연락처 정보 Contact info
+              </h3>
+              <p className="text-xs text-gray-400 mt-0.5">
+                매칭된 룸메이트가 나에게 연락할 수 있도록 쓰이는 실질적인 연락
+                수단입니다.
+              </p>
+            </div>
+
+            <div className="space-y-3 pt-1">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  휴대폰 번호 Phone number{" "}
+                  <span className="text-[#ff6b4a]">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="예: 469-000-0000"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:outline-none focus:border-[#ff6b4a]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  이메일 주소 Email address{" "}
+                  <span className="text-[#ff6b4a]">*</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="예: example@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:outline-none focus:border-[#ff6b4a]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  카카오톡 ID Kakao ID (선택)
+                </label>
+                <input
+                  type="text"
+                  placeholder="예: kakaoid123"
+                  value={kakaoId}
+                  onChange={(e) => setKakaoId(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:outline-none focus:border-[#ff6b4a]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 5. 희망 도시 Desired City */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-3">
             <label className="block text-sm font-bold text-gray-900">
               희망 도시 Desired city <span className="text-[#ff6b4a]">*</span>
@@ -260,7 +560,7 @@ export default function RoommateFormPage() {
             </div>
           </div>
 
-          {/* 3. 예산 범위 Budget range */}
+          {/* 6. 예산 범위 Budget range */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
             <div className="flex justify-between items-center">
               <label className="text-sm font-bold text-gray-900">
@@ -298,7 +598,7 @@ export default function RoommateFormPage() {
             </div>
           </div>
 
-          {/* 4. 기상 시간 & 취침 시간 */}
+          {/* 7. 기상 시간 & 취침 시간 */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-bold text-gray-900 mb-1">
@@ -330,7 +630,7 @@ export default function RoommateFormPage() {
             </div>
           </div>
 
-          {/* 5. 청결도 Cleanliness Level */}
+          {/* 8. 청결도 Cleanliness Level */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-2">
             <label className="block text-sm font-bold text-gray-900">
               청결도 Cleanliness level
@@ -361,7 +661,7 @@ export default function RoommateFormPage() {
             </div>
           </div>
 
-          {/* 6. 흡연 Smoking & 반려동물 OK Pets */}
+          {/* 9. 흡연 Smoking & 반려동물 OK Pets */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center justify-between">
               <div>
@@ -412,7 +712,7 @@ export default function RoommateFormPage() {
             </div>
           </div>
 
-          {/* 7. 선호 룸메이트 성별 Preferred roommate gender */}
+          {/* 10. 선호 룸메이트 성별 Preferred roommate gender */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-3">
             <label className="block text-sm font-bold text-gray-900">
               선호 룸메이트 성별 Preferred roommate gender
@@ -450,7 +750,7 @@ export default function RoommateFormPage() {
             </div>
           </div>
 
-          {/* 8. 입주 희망일 Move-in Date */}
+          {/* 11. 입주 희망일 Move-in Date */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-2">
             <label className="block text-sm font-bold text-gray-900">
               입주 희망일 Move-in date <span className="text-[#ff6b4a]">*</span>
@@ -464,7 +764,7 @@ export default function RoommateFormPage() {
             />
           </div>
 
-          {/* 9. 자기소개 Self Introduction */}
+          {/* 12. 자기소개 Self Introduction */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-2">
             <label className="block text-sm font-bold text-gray-900">
               자기소개 Self introduction{" "}
@@ -485,9 +785,8 @@ export default function RoommateFormPage() {
             </div>
           </div>
 
-          {/* 10. 하단 액션 바 (삭제 / 취소 / 저장·수정완료 버튼) */}
+          {/* 13. 하단 액션 바 */}
           <div className="flex justify-between items-center pt-4">
-            {/* 💡 수정 모드일 때만 '프로필 삭제' 버튼 표시 */}
             <div>
               {isEditMode && (
                 <button
