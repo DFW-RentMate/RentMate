@@ -120,8 +120,14 @@ export default function Navbar() {
               {clickOpen && (
                 <div className="absolute flex flex-col top-12 right-0 shadow-md w-40 bg-white border border-neutral-200 rounded-xl overflow-hidden text-small text-neutral-800">
                   <MenuItem label="마이페이지" />
-                  <MenuItem label="찜 목록" />
-                  <MenuItem label="내 매물" />
+                  <MenuItem
+                    label="찜 목록"
+                    onClick={() => router.push('/favorites')}
+                  />
+                  <MenuItem
+                    label="내 매물"
+                    onClick={() => router.push('/mylists')}
+                  />
                   <MenuItem label="내 룸메이트" />
                   <hr className="border-0 bg-neutral-400 h-[0.5px]" />
                   <MenuItem label="로그아웃" onClick={() => signOut()} />

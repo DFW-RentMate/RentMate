@@ -5,7 +5,6 @@ import { Heart } from 'lucide-react';
 import { SafeListing } from '@/app/types';
 import { useRouter } from 'next/navigation';
 import { toggleFavorite } from '@/app/actions/toggleFavorite';
-import { useState } from 'react';
 
 const ROOM_TYPE_LABEL: Record<string, string> = {
   Private: '개인실 Private',
@@ -19,7 +18,7 @@ interface listCardProps {
   isSelected: boolean;
   isFavorited: boolean;
   onHover?: (id: string | null) => void;
-  onFavoriteToggle: (id: string, result: boolean) => void;
+  onFavoriteToggle?: (id: string, result: boolean) => void;
 }
 
 const ListCard = ({
@@ -35,7 +34,7 @@ const ListCard = ({
   const handleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const result = await toggleFavorite(listing.id);
-    onFavoriteToggle(listing.id, result);
+    onFavoriteToggle?.(listing.id, result);
   };
 
   return (
