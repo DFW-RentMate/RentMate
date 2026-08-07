@@ -81,19 +81,11 @@ const FavoritesClient = ({ listings, roommates }: favoritesClientProps) => {
 
       {tab === "룸메이트" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {visibleRoommates.map((roommate) => {
+          {visibleRoommates.map((roommate: any) => {
             const user = roommate.users;
 
-            // 💡 1. 나이 계산 로직 (리스트 페이지와 동일하게 적용)
-            const calculatedAge =
-              roommate.age !== null && roommate.age !== undefined
-                ? roommate.age
-                : user?.birth_date
-                  ? new Date().getFullYear() -
-                    new Date(user.birth_date).getFullYear()
-                  : null;
-
-            // 💡 2. 성별 및 직업 매핑
+            // 💡 타입 에러가 나지 않도록 안전하게 속성 추출
+            const calculatedAge = roommate.age ?? null;
             const gender = roommate.gender || user?.gender || null;
             const occupation =
               roommate.occupation || user?.occupation_type || null;
@@ -122,7 +114,6 @@ const FavoritesClient = ({ listings, roommates }: favoritesClientProps) => {
                 maxBudget={Number(roommate.budget_max ?? 0)}
                 bio={roommate.self_intro ?? ""}
                 isLiked={true}
-                // 💡 3. 프로필 사진 URL 전달
                 profilePhotoUrl={user?.profile_photo_url || null}
                 onFavoriteToggle={handleRoommateFavoriteToggle}
               />
