@@ -88,7 +88,7 @@ export default async function RoommateProfilePage({
           </div>
 
           <div className="w-full lg:w-[320px] shrink-0 sticky top-24">
-            {/* 🔥 에러 해결: profile={safeProfile}을 제거하고 속성을 개별 전달! */}
+            {/* 💡 변경됨: 신규 추가한 phone, email, kakaoId를 정확하게 전달 */}
             <ActionSidebar
               targetProfileId={safeProfile.id}
               initialIsLiked={initialIsLiked}
@@ -96,8 +96,9 @@ export default async function RoommateProfilePage({
               budgetMin={Number(safeProfile.budget_min ?? 0)}
               budgetMax={Number(safeProfile.budget_max ?? 0)}
               city={safeProfile.desired_city}
-              email={safeProfile.users?.email}
-              kakaoLink={safeProfile.users?.kakao_id ?? undefined}
+              phone={safeProfile.phone ?? safeProfile.users?.phone_number}
+              email={safeProfile.email ?? safeProfile.users?.email}
+              kakaoId={safeProfile.kakao_id ?? safeProfile.users?.kakao_id}
             />
           </div>
         </div>

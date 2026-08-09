@@ -1,22 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link"; // 💡 상세 페이지 이동을 위한 Link import
-import { FiHeart, FiMapPin } from "react-icons/fi";
+import Link from "next/link";
+import { FiHeart, FiMapPin, FiBriefcase } from "react-icons/fi";
 import { useSession } from "next-auth/react";
 import useLoginModal from "@/hooks/useLoginModal";
 
 interface ProfileCardProps {
-  id: string; // 💡 DB 저장 및 대상 식별을 위해 꼭 필요한 프로필 ID
+  id: string;
   initial: string;
   name: string;
-  age: number;
+  age?: number | null;
+  isAgePublic?: boolean;
+  gender?: string | null;
+  occupation?: string | null;
   city: string;
   preference: string;
   minBudget: number;
   maxBudget: number;
   bio: string;
   isLiked?: boolean;
+  profilePhotoUrl?: string | null;
+  // 💡 찜 상태 변경 시 부모 컴포넌트에 알리기 위한 콜백 프롭스 추가
+  onFavoriteToggle?: (id: string, isFavorited: boolean) => void;
 }
 
 export default function ProfileCard({
@@ -24,36 +30,40 @@ export default function ProfileCard({
   initial,
   name,
   age,
+  isAgePublic = true,
+  gender,
+  occupation,
   city,
   preference,
   minBudget,
   maxBudget,
   bio,
   isLiked = false,
+  profilePhotoUrl,
+  onFavoriteToggle,
 }: ProfileCardProps) {
   const { data: session } = useSession();
   const loginModal = useLoginModal();
 
-  // 💡 1. 찜하기 상태 관리 (초기값은 DB에서 받아온 isLiked)
   const [liked, setLiked] = useState(isLiked);
 
-  // 💡 2. 하트 버튼 클릭 핸들러 (이벤트 버블링 차단 + API 연동)
   const handleLikeClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    // 🔥 상위 <Link> 태그의 페이지 이동 이벤트를 완벽하게 차단!
     e.preventDefault();
     e.stopPropagation();
 
-    // 로그인하지 않은 사용자는 전역 로그인 모달 띄우기
     if (!session) {
       loginModal.onOpen();
       return;
     }
 
-    // 화면의 하트 UI를 먼저 빠르게 변경 (Optimistic UI)
     const nextState = !liked;
     setLiked(nextState);
 
-    // 백엔드 API 호출로 DB에 저장/삭제 반영
+    // 💡 부모 컴포넌트에 찜 상태 변경 알림 (즉시 리스트에서 반영되도록 처리)
+    if (onFavoriteToggle) {
+      onFavoriteToggle(id, nextState);
+    }
+
     try {
       const response = await fetch("/api/roommates/favorites", {
         method: nextState ? "POST" : "DELETE",
@@ -66,39 +76,64 @@ export default function ProfileCard({
       }
     } catch (error) {
       console.error(error);
-      // 서버 저장 실패 시 하트 색상 롤백
       setLiked(!nextState);
+      // 서버 에러 발생 시 부모 쪽 상태도 원래대로 원복
+      if (onFavoriteToggle) {
+        onFavoriteToggle(id, !nextState);
+      }
       alert("찜하기 처리에 실패했습니다. 다시 시도해 주세요.");
     }
   };
 
+  const genderKor = gender === "M" ? "남성" : gender === "F" ? "여성" : "";
+
   return (
-    // 🔥 Tailwind 경고 해결: 맨 뒤의 'block'을 제거하고 'flex flex-col'만 유지
     <Link
       href={`/roommates/${id}`}
       className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 w-full flex flex-col h-full cursor-pointer relative"
     >
-      {/* 1. 상단: 아바타, 이름, 나이, 지역, 찜 버튼 */}
+      {/* 1. 상단: 아바타(사진 or 첫글자), 이름, 성별+나이, 지역+직업, 찜 버튼 */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#ffe4de] text-[#ff6b4a] rounded-full flex justify-center items-center font-bold text-lg shrink-0">
-            {initial}
+          <div className="w-10 h-10 bg-[#ffe4de] text-[#ff6b4a] rounded-full flex justify-center items-center font-bold text-lg shrink-0 overflow-hidden border border-gray-100">
+            {profilePhotoUrl ? (
+              <img
+                src={profilePhotoUrl}
+                alt={name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              initial
+            )}
           </div>
+
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-gray-900 text-[15px]">
                 {name}
               </span>
-              <span className="text-gray-400 text-sm font-medium">{age}세</span>
+              <span className="text-gray-400 text-sm font-medium">
+                {genderKor && `${genderKor} · `}
+                {isAgePublic && age ? `${age}세` : "나이 비공개"}
+              </span>
             </div>
+
             <div className="flex items-center gap-1 text-[11px] text-gray-400 mt-0.5">
               <FiMapPin className="w-3 h-3" />
-              {city} · {preference}
+              <span>{city}</span>
+              <span>·</span>
+              {occupation ? (
+                <span className="flex items-center gap-0.5 text-gray-500 font-medium">
+                  <FiBriefcase className="w-2.5 h-2.5" />
+                  {occupation}
+                </span>
+              ) : (
+                <span>{preference}</span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* 💡 찜하기 버튼: handleLikeClick의 preventDefault/stopPropagation으로 링크 이동 방지! */}
         <button
           onClick={handleLikeClick}
           className="text-gray-300 hover:text-[#ff6b4a] transition-colors p-1 relative z-10"
