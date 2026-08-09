@@ -56,9 +56,8 @@ export default function Step1BasicInfo({ form, updateForm }: StepProps) {
           </p>
         </div>
 
-        {/* 도시 + ZIP (2열) */}
+        {/* 도시 + ZIP */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* 도시 드롭다운 */}
           <div>
             <label className="mb-2 block text-sm font-bold text-gray-900">
               도시 City <span className="text-[#ff6b4a]">*</span>
@@ -77,7 +76,6 @@ export default function Step1BasicInfo({ form, updateForm }: StepProps) {
 
               {cityOpen && (
                 <div className="absolute z-20 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-lg">
-                  {/* 검색 */}
                   <div className="border-b border-gray-100 p-2">
                     <input
                       type="text"
@@ -88,7 +86,6 @@ export default function Step1BasicInfo({ form, updateForm }: StepProps) {
                       autoFocus
                     />
                   </div>
-                  {/* 목록 */}
                   <div className="max-h-52 overflow-y-auto p-1">
                     {filteredCities.length > 0 ? (
                       filteredCities.map((city) => (
@@ -119,7 +116,6 @@ export default function Step1BasicInfo({ form, updateForm }: StepProps) {
             </div>
           </div>
 
-          {/* ZIP Code */}
           <div>
             <label className="mb-2 block text-sm font-bold text-gray-900">
               우편번호 ZIP Code
@@ -184,45 +180,36 @@ export default function Step1BasicInfo({ form, updateForm }: StepProps) {
               className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition-colors focus:border-[#ff6b4a] focus:ring-2 focus:ring-[#ffe4de]"
             />
           </div>
-          <div>
-            <label className="mb-2 block text-sm font-bold text-gray-900">
-              연락 방법 Contact <span className="text-[#ff6b4a]">*</span>
-            </label>
 
-            <div className="mb-2 grid grid-cols-2 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-1">
-              <button
-                type="button"
-                onClick={() => updateForm('contactType', 'phone')}
-                className={`rounded-lg py-2 text-sm font-semibold transition-colors ${
-                  form.contactType === 'phone'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-500'
-                }`}
-              >
-                전화번호 Phone
-              </button>
-              <button
-                type="button"
-                onClick={() => updateForm('contactType', 'kakao')}
-                className={`rounded-lg py-2 text-sm font-semibold transition-colors ${
-                  form.contactType === 'kakao'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-500'
-                }`}
-              >
-                카카오톡 ID
-              </button>
+          <div className="flex flex-col gap-4">
+            {/* 전화번호 (필수) */}
+            <div>
+              <label className="mb-2 block text-sm font-bold text-gray-900">
+                전화번호 Phone <span className="text-[#ff6b4a]">*</span>
+              </label>
+              <input
+                type="tel"
+                value={form.contactPhone}
+                onChange={(e) => updateForm('contactPhone', e.target.value)}
+                placeholder="예: 469-123-4567"
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition-colors focus:border-[#ff6b4a] focus:ring-2 focus:ring-[#ffe4de]"
+              />
             </div>
 
-            <input
-              type="text"
-              value={form.contactValue}
-              onChange={(e) => updateForm('contactValue', e.target.value)}
-              placeholder={
-                form.contactType === 'phone' ? '예: 469-123-4567' : '예: myKakaoId'
-              }
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition-colors focus:border-[#ff6b4a] focus:ring-2 focus:ring-[#ffe4de]"
-            />
+            {/* 카카오톡 ID (선택) */}
+            <div>
+              <label className="mb-2 block text-sm font-bold text-gray-900">
+                카카오톡 ID{' '}
+                <span className="text-xs font-medium text-gray-400">(선택)</span>
+              </label>
+              <input
+                type="text"
+                value={form.contactKakao}
+                onChange={(e) => updateForm('contactKakao', e.target.value)}
+                placeholder="예: myKakaoId"
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition-colors focus:border-[#ff6b4a] focus:ring-2 focus:ring-[#ffe4de]"
+              />
+            </div>
           </div>
         </div>
 

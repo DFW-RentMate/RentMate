@@ -42,7 +42,7 @@ export const CITIES = [
   'Richardson', 'Plano', 'Allen', 'Frisco', 'Carrollton',
   'Dallas', 'Irving', 'Garland', 'McKinney', 'Denton',
   'Lewisville', 'Coppell', 'Addison', 'Arlington', 'Grapevine',
-  'Flower Mound', 'The Colony', 'Wylie', 'Murphy', 'Sachse',
+  'Flower Mound',
 ] as const;
 
 // 주변 편의시설 (한인 특화 랜드마크 포함)
