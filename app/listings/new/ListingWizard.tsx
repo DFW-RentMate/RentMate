@@ -12,6 +12,7 @@ import Step2Conditions from './steps/Step2Conditions';
 import Step3Photos from './steps/Step3Photos';
 import Step4Preview from './steps/Step4Preview';
 
+import { geocodeAddress } from './geocode';
 import {
   RoomTypeKo,
   GenderPrefKo,
@@ -19,6 +20,9 @@ import {
   GENDER_TO_DB,
 } from './mappings';
 
+// ─────────────────────────────────────────────
+// 단계 정의
+// ─────────────────────────────────────────────
 export enum STEPS {
   BASIC = 0,
   CONDITIONS = 1,
@@ -35,10 +39,10 @@ export interface ListingFormData {
   rentPrice: string;
   deposit: string;
   moveInDate: string;
-  contactType: 'phone' | 'kakao';
-  contactValue: string;
+  contactPhone: string;
+  contactKakao: string;
 
-  // Step 2 — 한글 값 사용 (팀 컨벤션)
+  // Step 2
   roomType: RoomTypeKo;
   genderPreference: GenderPrefKo;
   petsAllowed: boolean;
@@ -56,6 +60,7 @@ export interface ListingFormData {
   hasAc: boolean;
   hasHeating: boolean;
   hasTv: boolean;
+  nearbyFacilities: string[];
   amenitiesEtc: string;
   description: string;
 
@@ -71,8 +76,8 @@ const INITIAL_FORM: ListingFormData = {
   rentPrice: '',
   deposit: '',
   moveInDate: '',
-  contactType: 'phone',
-  contactValue: '',
+  contactPhone: '',
+  contactKakao: '',
 
   roomType: '개인실',
   genderPreference: '무관',
@@ -91,12 +96,16 @@ const INITIAL_FORM: ListingFormData = {
   hasAc: false,
   hasHeating: false,
   hasTv: false,
+  nearbyFacilities: [],
   amenitiesEtc: '',
   description: '',
 
   photos: [],
 };
 
+// ─────────────────────────────────────────────
+// 위저드 본체
+// ─────────────────────────────────────────────
 export default function ListingWizard() {
   const router = useRouter();
   const [step, setStep] = useState<STEPS>(STEPS.BASIC);
@@ -110,6 +119,7 @@ export default function ListingWizard() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  // ─── 단계별 유효성 검사 ───
   const validateStep = (): boolean => {
     if (step === STEPS.BASIC) {
       if (!form.title.trim()) return toast.error('매물 제목을 입력해주세요.'), false;
@@ -118,8 +128,8 @@ export default function ListingWizard() {
       if (!form.rentPrice || Number(form.rentPrice) <= 0)
         return toast.error('월세를 입력해주세요.'), false;
       if (!form.moveInDate) return toast.error('입주 가능일을 선택해주세요.'), false;
-      if (!form.contactValue.trim())
-        return toast.error('연락 방법을 입력해주세요.'), false;
+      if (!form.contactPhone.trim())
+        return toast.error('연락 가능한 전화번호를 입력해주세요.'), false;
     }
     if (step === STEPS.CONDITIONS) {
       if (form.description.trim().length < 20)
@@ -145,30 +155,88 @@ export default function ListingWizard() {
     setStep((prev) => prev + 1);
   };
 
+  // ─── 최종 제출 ───
   const onSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // ★ DB 저장용 payload: 한글 → 영문 enum 변환은 여기서만!
+      // 1. 주소 → 좌표
+      const fullAddress = form.zipCode
+        ? `${form.address}, ${form.city}, TX ${form.zipCode}`
+        : `${form.address}, ${form.city}, TX`;
+      const { lat, lng } = await geocodeAddress(fullAddress);
+
+      if (lat === null || lng === null) {
+        toast.error('주소로 위치를 찾지 못했어요. 주소를 확인해주세요.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 2. 사진 업로드 → URL 배열
+      const photoUrls: string[] = [];
+      for (const file of form.photos) {
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch('/api/upload', { method: 'POST', body: fd });
+        if (res.ok) {
+          const { url } = await res.json();
+          photoUrls.push(url);
+        }
+      }
+
+      // 3. 매물 등록 POST
       const payload = {
-        ...form,
+        title: form.title,
+        description: form.description,
         roomType: ROOM_TYPE_TO_DB[form.roomType],
+        rentPrice: form.rentPrice,
+        deposit: form.deposit,
+        moveInDate: form.moveInDate,
+        contactPhone: form.contactPhone,
+        contactKakao: form.contactKakao || null,
+        addressRaw: fullAddress,
+        city: form.city,
+        latitude: lat,
+        longitude: lng,
         genderPreference: GENDER_TO_DB[form.genderPreference],
+        petsAllowed: form.petsAllowed,
+        smokingAllowed: form.smokingAllowed,
+        parkingAvailable: form.parkingAvailable,
+        furnished: form.furnished,
+        electricityIncluded: form.electricityIncluded,
+        waterIncluded: form.waterIncluded,
+        gasIncluded: form.gasIncluded,
+        internetIncluded: form.internetIncluded,
+        trashIncluded: form.trashIncluded,
+        hasWasher: form.hasWasher,
+        hasDryer: form.hasDryer,
+        hasRefrigerator: form.hasRefrigerator,
+        hasAc: form.hasAc,
+        hasHeating: form.hasHeating,
+        hasTv: form.hasTv,
+        amenitiesEtc: form.nearbyFacilities.join(', '),
+        photoUrls,
       };
 
-      // TODO: 사진 업로드(Vercel Blob) + POST /api/listings 연결
-      console.log('제출 데이터:', payload);
-      await new Promise((r) => setTimeout(r, 800));
+      const res = await fetch('/api/listings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('등록 실패');
 
       toast.success('매물이 등록되었습니다!');
       router.push('/listings');
       router.refresh();
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast.error('등록에 실패했어요. 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // ─── 단계별 콘텐츠 ───
   let stepContent = <Step1BasicInfo form={form} updateForm={updateForm} />;
   if (step === STEPS.CONDITIONS) {
     stepContent = <Step2Conditions form={form} updateForm={updateForm} />;
@@ -188,7 +256,7 @@ export default function ListingWizard() {
 
         <Link
           href="/listings"
-          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-900"
         >
           <ArrowLeft size={16} />
           검색으로 돌아가기

@@ -6,7 +6,6 @@ import {
   GENDER_PREFS_KO,
   ROOM_TYPE_LABEL_EN,
   GENDER_LABEL_EN,
-  NEARBY_FACILITIES,
 } from '../mappings';
 
 interface StepProps {
@@ -17,7 +16,7 @@ interface StepProps {
   ) => void;
 }
 
-// ─── 토글 스위치 (flex 방식 — 손잡이가 오른쪽으로 이동) ───
+// ─── 토글 스위치 ───
 function Toggle({
   label,
   labelEn,
@@ -40,23 +39,21 @@ function Toggle({
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`
-          flex h-6 w-11 shrink-0 items-center rounded-full px-0.5 transition-colors
-          ${checked ? 'bg-[#ff6b4a]' : 'bg-gray-200'}
-        `}
+        className={`flex h-6 w-11 shrink-0 items-center rounded-full px-0.5 transition-colors ${
+          checked ? 'bg-[#ff6b4a]' : 'bg-gray-200'
+        }`}
       >
         <span
-          className={`
-            block h-5 w-5 rounded-full bg-white shadow transition-transform duration-200
-            ${checked ? 'translate-x-[20px]' : 'translate-x-0'}
-          `}
+          className={`block h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${
+            checked ? 'translate-x-[20px]' : 'translate-x-0'
+          }`}
         />
       </button>
     </div>
   );
 }
 
-// ─── 라디오 pill (단일 선택) ───
+// ─── 라디오 pill ───
 function RadioPills({
   options,
   value,
@@ -96,44 +93,6 @@ function RadioPills({
   );
 }
 
-// ─── 다중 선택 칩 (주변 편의시설) ───
-function MultiChips({
-  options,
-  selected,
-  onToggle,
-}: {
-  options: readonly string[];
-  selected: string[];
-  onToggle: (v: string) => void;
-}) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {options.map((opt) => {
-        const on = selected.includes(opt);
-        return (
-          <button
-            key={opt}
-            type="button"
-            onClick={() => onToggle(opt)}
-            className={`
-              rounded-full border px-4 py-2 text-sm font-semibold transition-colors
-              ${
-                on
-                  ? 'border-[#ff6b4a] bg-[#fff0ec] text-[#ff6b4a]'
-                  : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
-              }
-            `}
-          >
-            {on && '✓ '}
-            {opt}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-// ─── 섹션 제목 ───
 function SectionTitle({
   children,
   required,
@@ -154,13 +113,6 @@ function SectionTitle({
 }
 
 export default function Step2Conditions({ form, updateForm }: StepProps) {
-  const toggleFacility = (name: string) => {
-    const next = form.nearbyFacilities.includes(name)
-      ? form.nearbyFacilities.filter((f) => f !== name)
-      : [...form.nearbyFacilities, name];
-    updateForm('nearbyFacilities', next);
-  };
-
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-6 md:p-8 shadow-sm">
       <div className="flex flex-col gap-8">
@@ -251,36 +203,16 @@ export default function Step2Conditions({ form, updateForm }: StepProps) {
           </div>
         </div>
 
-        {/* 주변 편의시설 */}
+        {/* 주변 편의시설: 비활성화 → 상세 설명 안내 문구로 대체 */}
         <div>
-          <SectionTitle hint="해당하는 항목을 모두 선택하세요. 도보 또는 차로 5분 이내 기준.">
-            주변 편의시설 Nearby
-          </SectionTitle>
-          <MultiChips
-            options={NEARBY_FACILITIES}
-            selected={form.nearbyFacilities}
-            onToggle={toggleFacility}
-          />
-          {form.nearbyFacilities.length > 0 && (
-            <p className="mt-2 text-xs text-gray-500">
-              {form.nearbyFacilities.length}개 선택됨
-            </p>
-          )}
-        </div>
-
-        {/* 상세 설명 */}
-        <div>
-          <SectionTitle
-            required
-            hint="위 항목으로 표현하기 어려운 내용만 적어주세요."
-          >
+          <SectionTitle required hint="예) 마트(Kroger 등), 대중교통(DART), UTD 캠퍼스, 한인타운, 한인마트 도보 5분 등 주변 정보와 방 크기, 생활 환경, 하우스메이트 정보를 자유롭게 적어주세요.">
             상세 설명 Description
           </SectionTitle>
           <textarea
             value={form.description}
             onChange={(e) => updateForm('description', e.target.value)}
-            placeholder="예) 하우스메이트는 20대 직장인 1명입니다. 방은 남향이라 채광이 좋고 조용한 편이에요. 계약은 최소 6개월부터 가능합니다."
-            rows={5}
+            placeholder="예) 마트(Kroger)까지 도보 5분, DART 역 인근, UTD 캠퍼스 차로 10분. 하우스메이트는 20대 직장인 1명입니다. 방은 남향이라 채광이 좋고 조용한 편이에요."
+            rows={7}
             className="w-full resize-none rounded-xl border border-gray-200 px-4 py-3 text-sm leading-relaxed outline-none transition-colors focus:border-[#ff6b4a] focus:ring-2 focus:ring-[#ffe4de]"
           />
           <p
