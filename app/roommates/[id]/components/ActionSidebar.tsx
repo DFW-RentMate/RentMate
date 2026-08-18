@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import useLoginModal from "@/hooks/useLoginModal";
-import { FiPhone, FiMail, FiMessageCircle, FiHeart } from "react-icons/fi";
+import { Phone, Mail, Copy, Heart, Check } from "lucide-react"; // 💡 Check 아이콘 추가
 
 interface ActionSidebarProps {
   targetProfileId: string;
@@ -12,9 +12,9 @@ interface ActionSidebarProps {
   budgetMin: number;
   budgetMax: number;
   city: string;
-  phone?: string | null; // 💡 신규: 휴대폰 번호
-  email?: string | null; // 💡 신규: 이메일 주소
-  kakaoId?: string | null; // 💡 신규: 카카오톡 ID (선택)
+  phone?: string | null;
+  email?: string | null;
+  kakaoId?: string | null;
 }
 
 export default function ActionSidebar({
@@ -33,12 +33,19 @@ export default function ActionSidebar({
 
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [copiedType, setCopiedType] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleLikeToggle = async () => {
+  const handleLikeToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!session) {
       loginModal.onOpen();
       return;
     }
+
+    if (loading) return;
+    setLoading(true);
 
     const nextState = !isLiked;
     setIsLiked(nextState);
@@ -57,10 +64,11 @@ export default function ActionSidebar({
       console.error(error);
       setIsLiked(!nextState);
       alert("찜하기 처리에 실패했습니다. 다시 시도해 주세요.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // 💡 클립보드 복사 공통 핸들러 (+ 버튼 시각 피드백)
   const handleCopy = (text: string, type: string, label: string) => {
     if (!text) {
       alert(`등록된 ${label} 정보가 없습니다.`);
@@ -68,7 +76,6 @@ export default function ActionSidebar({
     }
     navigator.clipboard.writeText(text);
     setCopiedType(type);
-    alert(`${roommateName}님의 ${label}(${text})이(가) 복사되었습니다!`);
 
     setTimeout(() => {
       setCopiedType(null);
@@ -76,81 +83,86 @@ export default function ActionSidebar({
   };
 
   return (
-    <aside className="w-full lg:w-80 p-6 bg-white border border-gray-200 rounded-2xl shadow-sm h-fit sticky top-24">
-      <div className="mb-6">
-        <h3 className="text-lg font-bold text-gray-900">
-          {roommateName}님에게 연락하기
-        </h3>
-        <p className="text-sm text-gray-500 mt-1">
-          {city} · ${budgetMin} - ${budgetMax}/월
-        </p>
-      </div>
-
-      <div className="space-y-3">
-        {/* 1. 휴대폰 번호 복사 버튼 (필수) */}
-        {phone && (
-          <button
-            onClick={() => handleCopy(phone, "phone", "휴대폰 번호")}
-            className="w-full py-3 px-4 bg-[#ff6b4a] hover:bg-[#e55a3b] active:bg-[#d44d30] text-white font-bold text-sm rounded-xl transition shadow-sm flex items-center justify-center gap-2"
-          >
-            <FiPhone className="w-4 h-4" />
-            <span>
-              {copiedType === "phone"
-                ? "✓ 전화번호 복사 완료!"
-                : "전화번호로 연락하기"}
+    <aside className="w-full md:w-80 shrink-0">
+      <div className="sticky top-24 border border-gray-200 rounded-2xl p-5 shadow-md bg-white flex flex-col gap-3">
+        {/* 상단 예산 및 지역 */}
+        <div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-bold">
+              ${budgetMin.toLocaleString()} ~ ${budgetMax.toLocaleString()}
             </span>
-          </button>
-        )}
+            <span className="text-[#8e857d] text-sm">/ 월</span>
+          </div>
+          <div className="text-sm text-[#8e857d] mt-0.5">희망 지역: {city}</div>
+        </div>
 
-        {/* 2. 이메일 복사 버튼 (필수) */}
-        {email && (
-          <button
-            onClick={() => handleCopy(email, "email", "이메일")}
-            className="w-full py-3 px-4 border border-gray-200 bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 font-bold text-sm rounded-xl transition flex items-center justify-center gap-2"
-          >
-            <FiMail className="w-4 h-4 text-gray-500" />
-            <span>
-              {copiedType === "email"
-                ? "✓ 이메일 복사 완료!"
-                : "이메일로 연락하기"}
-            </span>
-          </button>
-        )}
+        {/* 1. 찜하기 버튼 (FavoriteButton 완벽 이식) */}
+        <button
+          onClick={handleLikeToggle}
+          className="w-full border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-2 font-medium hover:bg-gray-100 transition-colors"
+        >
+          <Heart
+            size={18}
+            className={isLiked ? "fill-red-500 text-red-500" : "text-gray-400"}
+          />
+          {isLiked ? "찜 완료" : "찜하기"}
+        </button>
 
-        {/* 3. 카카오톡 ID 복사 버튼 (입력되어 있을 때만 조건부 표시) */}
+        {/* 2. 카카오톡 문의 버튼 (KakaoContact 완벽 이식) */}
         {kakaoId && (
           <button
             onClick={() => handleCopy(kakaoId, "kakao", "카카오톡 ID")}
-            className="w-full py-3 px-4 bg-[#FEE500] hover:bg-[#e6cf00] active:bg-[#d9c400] text-[#191919] font-bold text-sm rounded-xl transition flex items-center justify-center gap-2"
+            className="w-full bg-[#FEE500] rounded-xl py-3 font-semibold text-[#3C1E1E] flex items-center justify-center gap-2 cursor-pointer hover:bg-[#F0D900] transition-colors"
           >
-            <FiMessageCircle className="w-4 h-4" />
-            <span>
-              {copiedType === "kakao"
-                ? "✓ 카카오톡 ID 복사 완료!"
-                : "카카오톡으로 문의"}
-            </span>
+            {copiedType === "kakao" ? (
+              <>
+                <Check size={16} className="text-green-700" />
+                아이디가 복사되었습니다
+              </>
+            ) : (
+              <>
+                <Copy size={16} />
+                카카오톡으로 문의
+              </>
+            )}
           </button>
         )}
 
-        {/* 4. 찜하기 버튼 */}
-        <button
-          onClick={handleLikeToggle}
-          className={`w-full py-3 px-4 border font-bold text-sm rounded-xl transition flex items-center justify-center gap-2 ${
-            isLiked
-              ? "border-red-500 text-red-500 bg-red-50"
-              : "border-gray-200 hover:bg-gray-50 text-gray-700"
-          }`}
-        >
-          <FiHeart
-            className={`w-4 h-4 ${isLiked ? "fill-current text-red-500" : ""}`}
-          />
-          <span>{isLiked ? "찜 완료" : "찜하기"}</span>
-        </button>
-      </div>
+        {/* 3. 전화번호 연락 버튼 (PhoneContact 완벽 이식 - 클릭 시 바로 전화 연결) */}
+        {phone && (
+          <a
+            href={`tel:${phone}`}
+            className="w-full bg-emerald-400 hover:bg-emerald-500 transition-colors rounded-xl py-3 font-semibold text-white flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Phone size={16} />
+            {phone}
+          </a>
+        )}
 
-      <p className="text-xs text-center text-gray-400 mt-4">
-        연락 시 안전거래 수칙을 확인하세요.
-      </p>
+        {/* 4. 이메일 복사 버튼 (스타일 통일) */}
+        {email && (
+          <button
+            onClick={() => handleCopy(email, "email", "이메일")}
+            className="w-full border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-2 font-medium hover:bg-gray-100 transition-colors"
+          >
+            {copiedType === "email" ? (
+              <>
+                <Check size={16} className="text-green-700" />
+                이메일이 복사되었습니다
+              </>
+            ) : (
+              <>
+                <Mail size={16} className="text-gray-500" />
+                이메일로 연락하기
+              </>
+            )}
+          </button>
+        )}
+
+        <p className="text-xs text-[#8e857d] text-center mt-1">
+          연락 시 안전거래 수칙을 확인하세요.
+        </p>
+      </div>
     </aside>
   );
 }
