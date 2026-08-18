@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Home, Heart, ChevronDown, Plus } from 'lucide-react';
-import { useState } from 'react';
-import MenuItem from './MenuItem';
-import { usePathname, useRouter } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
-import useLoginModal from '@/hooks/useLoginModal';
+import Link from "next/link";
+import { Home, Heart, ChevronDown, Plus } from "lucide-react";
+import { useState } from "react";
+import MenuItem from "./MenuItem";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import useLoginModal from "@/hooks/useLoginModal";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -16,17 +16,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const clickUserBar = () => {
-    setClickOpen(!clickOpen);
-  };
+  const clickUserBar = () => setClickOpen(!clickOpen);
 
-  // ★ 매물 등록 클릭: 로그인 여부에 따라 분기
   const handleCreateListing = () => {
-    if (session) {
-      router.push('/listings/new'); // 로그인 → 등록 페이지로
-    } else {
-      loginModal.onOpen(); // 비로그인 → 로그인 모달
-    }
+    if (session) router.push("/listings/new");
+    else loginModal.onOpen();
   };
 
   return (
@@ -37,7 +31,6 @@ export default function Navbar() {
           <div className="flex items-center justify-center w-10 h-10 text-white bg-[#FF6B4A] rounded-full">
             <Home size={20} strokeWidth={2.5} />
           </div>
-
           <div className="flex flex-col">
             <span className="text-xl font-extrabold text-gray-900 tracking-tight leading-none">
               RoomRent DFW
@@ -47,25 +40,18 @@ export default function Navbar() {
             </span>
           </div>
         </Link>
-
         <div className="hidden md:flex items-center space-x-8 text-[15px] font-semibold text-gray-700">
           <Link
             href="/listings"
-            className={`
-              hover:text-[#FF6B4A] p-2 rounded-xl transition-colors flex gap-1.5
-              ${pathname === '/listings' ? 'bg-[#faefec] text-[#FF6B4A]' : 'hover:bg-neutral-100'}
-            `}
+            className={`hover:text-[#FF6B4A] p-2 rounded-xl transition-colors flex gap-1.5 ${pathname === "/listings" ? "bg-[#faefec] text-[#FF6B4A]" : "hover:bg-neutral-100"}`}
           >
             매물 검색 <span className="text-gray-400 font-normal">Search</span>
           </Link>
           <Link
             href="/roommates"
-            className={`
-              hover:text-[#FF6B4A] p-2 rounded-xl transition-colors flex gap-1.5
-              ${pathname === '/roommates' ? 'bg-[#faefec] text-[#FF6B4A]' : 'hover:bg-neutral-100'}
-            `}
+            className={`hover:text-[#FF6B4A] p-2 rounded-xl transition-colors flex gap-1.5 ${pathname === "/roommates" ? "bg-[#faefec] text-[#FF6B4A]" : "hover:bg-neutral-100"}`}
           >
-            룸메이트 찾기{' '}
+            룸메이트 찾기{" "}
             <span className="text-gray-400 font-normal">Roommates</span>
           </Link>
         </div>
@@ -73,32 +59,31 @@ export default function Navbar() {
 
       {/* ── Right ── */}
       <div className="flex items-center space-x-5">
-        {/* ★ 매물 등록: 항상 표시, 클릭 시 로그인 여부 판단 */}
         <button
           onClick={handleCreateListing}
           className="flex items-center px-4 py-2 text-sm font-semibold text-white transition-colors bg-[#FF6B4A] rounded-full hover:bg-[#E55A39] cursor-pointer"
         >
           <Plus size={16} strokeWidth={3} className="mr-1.5" />
-          매물 등록{' '}
+          매물 등록{" "}
           <span className="ml-1.5 font-normal opacity-90 text-[13px]">
             List
           </span>
         </button>
 
         {session ? (
-          // ══════════ 로그인 상태 ══════════
           <>
-            {/* 찜 목록 하트 */}
-            <button className="relative p-1 cursor-pointer">
+            {/* 💡 하트 숫자 뱃지 제거 완료 */}
+            <button
+              className="p-1.5 flex items-center justify-center rounded-full hover:bg-orange-50 transition-colors cursor-pointer group"
+              onClick={() => router.push("/favorites")}
+            >
               <Heart
-                size={26}
+                size={24}
                 strokeWidth={1.5}
-                className="hover:fill-[#FF6B4A] hover:text-primary transition-colors"
-                onClick={() => router.push('/favorites')}
+                className="fill-[#FF6B4A] text-[#FF6B4A] transition-transform group-hover:scale-110"
               />
             </button>
 
-            {/* 프로필 드롭다운 */}
             <button
               className="relative flex items-center space-x-1.5 p-1 rounded-full hover:bg-gray-50 transition-colors"
               onClick={clickUserBar}
@@ -112,7 +97,7 @@ export default function Navbar() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  (session.user?.name?.charAt(0) ?? '유')
+                  (session.user?.name?.charAt(0) ?? "유")
                 )}
               </div>
               <ChevronDown size={18} className="text-gray-500" />
@@ -122,11 +107,11 @@ export default function Navbar() {
                   <MenuItem label="마이페이지" />
                   <MenuItem
                     label="찜 목록"
-                    onClick={() => router.push('/favorites')}
+                    onClick={() => router.push("/favorites")}
                   />
                   <MenuItem
                     label="내 매물"
-                    onClick={() => router.push('/mylists')}
+                    onClick={() => router.push("/mylists")}
                   />
                   <MenuItem label="내 룸메이트" />
                   <hr className="border-0 bg-neutral-400 h-[0.5px]" />
@@ -136,12 +121,11 @@ export default function Navbar() {
             </button>
           </>
         ) : (
-          // ══════════ 비로그인 상태 ══════════
           <div
             onClick={loginModal.onOpen}
             className="flex items-center border border-neutral-300 px-4 py-2 text-sm font-semibold text-black transition-colors bg-neutral-50 rounded-xl cursor-pointer hover:bg-neutral-100"
           >
-            로그인{' '}
+            로그인{" "}
             <span className="ml-1.5 font-normal opacity-90 text-[13px] text-neutral-400">
               Log in
             </span>

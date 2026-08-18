@@ -1,7 +1,7 @@
-'use client';
-import { useState } from 'react';
-import { Heart } from 'lucide-react';
-import { toggleFavorite } from '@/app/actions/toggleFavorite';
+"use client";
+import { useState } from "react";
+import { Heart } from "lucide-react";
+import { toggleFavorite } from "@/app/actions/toggleFavorite";
 
 interface Props {
   listingId: string;
@@ -17,11 +17,17 @@ const FavoriteButton = ({ listingId, initialFavorited }: Props) => {
     e.stopPropagation();
     if (loading) return;
     setLoading(true);
+
     try {
       const result = await toggleFavorite(listingId);
       setFavorited(result);
+
+      // 💡 여기서 핵심! 방금 찜했는지(true), 취소했는지(false) Navbar한테 던져줌
+      window.dispatchEvent(
+        new CustomEvent("favoriteUpdated", { detail: { isAdded: result } }),
+      );
     } catch {
-      alert('로그인이 필요합니다');
+      alert("로그인이 필요합니다");
     } finally {
       setLoading(false);
     }
@@ -34,9 +40,9 @@ const FavoriteButton = ({ listingId, initialFavorited }: Props) => {
     >
       <Heart
         size={18}
-        className={favorited ? 'fill-red-500 text-red-500' : 'text-gray-400'}
+        className={favorited ? "fill-red-500 text-red-500" : "text-gray-400"}
       />
-      {favorited ? '찜 완료' : '찜하기'}
+      {favorited ? "찜 완료" : "찜하기"}
     </button>
   );
 };

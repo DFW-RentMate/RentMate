@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import useLoginModal from "@/hooks/useLoginModal";
-import { Phone, Mail, Copy, Heart, Check } from "lucide-react"; // 💡 Check 아이콘 추가
+import { Phone, Mail, Copy, Heart, Check } from "lucide-react";
 
 interface ActionSidebarProps {
   targetProfileId: string;
@@ -43,7 +43,6 @@ export default function ActionSidebar({
       loginModal.onOpen();
       return;
     }
-
     if (loading) return;
     setLoading(true);
 
@@ -57,9 +56,12 @@ export default function ActionSidebar({
         body: JSON.stringify({ targetProfileId }),
       });
 
-      if (!response.ok) {
-        throw new Error("API 요청 실패");
-      }
+      if (!response.ok) throw new Error("API 요청 실패");
+
+      // 💡 여기서 핵심! 방금 찜했는지(true), 취소했는지(false) Navbar한테 던져줌
+      window.dispatchEvent(
+        new CustomEvent("favoriteUpdated", { detail: { isAdded: nextState } }),
+      );
     } catch (error) {
       console.error(error);
       setIsLiked(!nextState);
@@ -70,22 +72,15 @@ export default function ActionSidebar({
   };
 
   const handleCopy = (text: string, type: string, label: string) => {
-    if (!text) {
-      alert(`등록된 ${label} 정보가 없습니다.`);
-      return;
-    }
+    if (!text) return alert(`등록된 ${label} 정보가 없습니다.`);
     navigator.clipboard.writeText(text);
     setCopiedType(type);
-
-    setTimeout(() => {
-      setCopiedType(null);
-    }, 2000);
+    setTimeout(() => setCopiedType(null), 2000);
   };
 
   return (
     <aside className="w-full md:w-80 shrink-0">
       <div className="sticky top-24 border border-gray-200 rounded-2xl p-5 shadow-md bg-white flex flex-col gap-3">
-        {/* 상단 예산 및 지역 */}
         <div>
           <div className="flex items-baseline gap-1">
             <span className="text-2xl font-bold">
@@ -96,7 +91,6 @@ export default function ActionSidebar({
           <div className="text-sm text-[#8e857d] mt-0.5">희망 지역: {city}</div>
         </div>
 
-        {/* 1. 찜하기 버튼 (FavoriteButton 완벽 이식) */}
         <button
           onClick={handleLikeToggle}
           className="w-full border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-2 font-medium hover:bg-gray-100 transition-colors"
@@ -108,7 +102,6 @@ export default function ActionSidebar({
           {isLiked ? "찜 완료" : "찜하기"}
         </button>
 
-        {/* 2. 카카오톡 문의 버튼 (KakaoContact 완벽 이식) */}
         {kakaoId && (
           <button
             onClick={() => handleCopy(kakaoId, "kakao", "카카오톡 ID")}
@@ -128,7 +121,6 @@ export default function ActionSidebar({
           </button>
         )}
 
-        {/* 3. 전화번호 연락 버튼 (PhoneContact 완벽 이식 - 클릭 시 바로 전화 연결) */}
         {phone && (
           <a
             href={`tel:${phone}`}
@@ -139,7 +131,6 @@ export default function ActionSidebar({
           </a>
         )}
 
-        {/* 4. 이메일 복사 버튼 (스타일 통일) */}
         {email && (
           <button
             onClick={() => handleCopy(email, "email", "이메일")}
