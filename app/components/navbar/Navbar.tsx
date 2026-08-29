@@ -24,7 +24,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex items-center justify-between px-8 py-3 bg-white/80 backdrop-blur-md border-b border-gray-300 sticky top-0 z-50">
+    <nav className="flex items-center justify-between px-8 py-3 bg-white/85 backdrop-blur-md border-b border-gray-300 sticky top-0 z-50">
       {/* ── Left: 로고 + 네비 링크 ── */}
       <div className="flex items-center space-x-10">
         <Link href="/" className="flex items-center space-x-3">
@@ -72,7 +72,6 @@ export default function Navbar() {
 
         {session ? (
           <>
-            {/* 💡 하트 숫자 뱃지 제거 완료 */}
             <button
               className="p-1.5 flex items-center justify-center rounded-full hover:bg-orange-50 transition-colors cursor-pointer group"
               onClick={() => router.push("/favorites")}
@@ -84,41 +83,61 @@ export default function Navbar() {
               />
             </button>
 
-            <button
-              className="relative flex items-center space-x-1.5 p-1 rounded-full hover:bg-gray-50 transition-colors"
-              onClick={clickUserBar}
-            >
-              <div className="flex items-center justify-center w-9 h-9 text-sm font-bold text-[#FF6B4A] bg-orange-100 rounded-full cursor-pointer overflow-hidden">
-                {session.user?.image ? (
-                  <img
-                    src={session.user.image}
-                    alt="프로필"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  (session.user?.name?.charAt(0) ?? "유")
-                )}
-              </div>
-              <ChevronDown size={18} className="text-gray-500" />
+            <div className="relative">
+              <button
+                className="flex items-center space-x-1.5 p-1 rounded-full hover:bg-gray-50 transition-colors"
+                onClick={clickUserBar}
+              >
+                <div className="flex items-center justify-center w-9 h-9 text-sm font-bold text-[#FF6B4A] bg-orange-100 rounded-full cursor-pointer overflow-hidden">
+                  {session.user?.image ? (
+                    <img
+                      src={session.user.image}
+                      alt="프로필"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    (session.user?.name?.charAt(0) ?? "유")
+                  )}
+                </div>
+                <ChevronDown size={18} className="text-gray-500" />
+              </button>
 
               {clickOpen && (
-                <div className="absolute flex flex-col top-12 right-0 shadow-md w-40 bg-white border border-neutral-200 rounded-xl overflow-hidden text-small text-neutral-800">
-                  <MenuItem label="마이페이지" />
+                <div className="absolute flex flex-col top-12 right-0 shadow-lg w-40 bg-white border border-neutral-200 rounded-xl overflow-hidden text-sm text-neutral-800 z-50">
+                  <MenuItem
+                    label="마이페이지"
+                    onClick={() => {
+                      router.push("/mypage");
+                      setClickOpen(false);
+                    }}
+                  />
                   <MenuItem
                     label="찜 목록"
-                    onClick={() => router.push("/favorites")}
+                    onClick={() => {
+                      router.push("/favorites");
+                      setClickOpen(false);
+                    }}
                   />
                   <MenuItem
                     label="내 매물"
-                    onClick={() => router.push("/mylists")}
+                    onClick={() => {
+                      router.push("/mylists");
+                      setClickOpen(false);
+                    }}
                   />
-                  <MenuItem label="내 룸메이트" />
-                  <hr className="border-0 bg-neutral-400 h-[0.5px]" />
+                  <MenuItem
+                    label="내 룸메이트"
+                    onClick={() => {
+                      router.push("/roommates/me");
+                      setClickOpen(false);
+                    }}
+                  />
+                  <hr className="border-0 bg-neutral-200 h-px" />
                   <MenuItem label="로그아웃" onClick={() => signOut()} />
                 </div>
               )}
-            </button>
+            </div>
           </>
         ) : (
           <div

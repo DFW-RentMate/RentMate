@@ -1,5 +1,5 @@
-import getListingById from '@/app/actions/getListingById';
-import { Zap, Droplets, Flame, Wifi, Trash2, MapPin } from 'lucide-react';
+import getListingById from "@/app/actions/getListingById";
+import { Zap, Droplets, Flame, Wifi, Trash2, MapPin } from "lucide-react";
 import {
   Users,
   CalendarDays,
@@ -14,23 +14,23 @@ import {
   Thermometer,
   Heart,
   MessageCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
-import {} from 'lucide-react';
-import BackButton from './BackButton';
-import Badge from './Badge';
-import PhotoGallery from './PhotoGallery';
-import MapWrapper from './MapWrapper';
-import KakaoContact from './KakaoContact';
-import PhoneContact from './PhoneContact';
-import { getFavoriteIds } from '@/app/actions/getFavoriteIds';
-import FavoriteButton from './FavoriteButton';
+import {} from "lucide-react";
+import BackButton from "./BackButton";
+import Badge from "./Badge";
+import PhotoGallery from "./PhotoGallery";
+import MapWrapper from "./MapWrapper";
+import KakaoContact from "./KakaoContact";
+import PhoneContact from "./PhoneContact";
+import { getFavoriteIds } from "@/app/actions/getFavoriteIds";
+import FavoriteButton from "./FavoriteButton";
 
 const ROOM_TYPE_LABEL: Record<string, string> = {
-  Private: '개인실 Private',
-  Shared: '쉐어룸 Shared',
-  Studio: '스튜디오 Studio',
-  Master_Bedroom: '마스터룸 Master',
+  Private: "개인실 Private",
+  Shared: "쉐어룸 Shared",
+  Studio: "스튜디오 Studio",
+  Master_Bedroom: "마스터룸 Master",
 };
 // 텍스트 색깔 #8e857d
 
@@ -42,44 +42,44 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const photos = searchList?.listing_photos;
   const utilities = [
     {
-      key: 'electricity_included',
-      label: '전기 Electric',
+      key: "electricity_included",
+      label: "전기 Electric",
       icon: <Zap size={14} />,
     },
     {
-      key: 'water_included',
-      label: '수도 Water',
+      key: "water_included",
+      label: "수도 Water",
       icon: <Droplets size={14} />,
     },
-    { key: 'gas_included', label: '가스 Gas', icon: <Flame size={14} /> },
+    { key: "gas_included", label: "가스 Gas", icon: <Flame size={14} /> },
     {
-      key: 'internet_included',
-      label: '인터넷 Internet',
+      key: "internet_included",
+      label: "인터넷 Internet",
       icon: <Wifi size={14} />,
     },
     {
-      key: 'trash_included',
-      label: '쓰레기 Trash',
+      key: "trash_included",
+      label: "쓰레기 Trash",
       icon: <Trash2 size={14} />,
     },
   ].filter(({ key }) => searchList?.[key as keyof typeof searchList]);
 
   const appliances = [
     {
-      key: 'has_washer',
-      label: '세탁기 Washer',
+      key: "has_washer",
+      label: "세탁기 Washer",
       icon: <WashingMachine size={14} />,
     },
-    { key: 'has_dryer', label: '건조기 Dryer', icon: <Wind size={14} /> },
+    { key: "has_dryer", label: "건조기 Dryer", icon: <Wind size={14} /> },
     {
-      key: 'has_refrigerator',
-      label: '냉장고 Fridge',
+      key: "has_refrigerator",
+      label: "냉장고 Fridge",
       icon: <Refrigerator size={14} />,
     },
-    { key: 'has_ac', label: '에어컨 A/C', icon: <AirVent size={14} /> },
+    { key: "has_ac", label: "에어컨 A/C", icon: <AirVent size={14} /> },
     {
-      key: 'has_heating',
-      label: '난방 Heating',
+      key: "has_heating",
+      label: "난방 Heating",
       icon: <Thermometer size={14} />,
     },
   ].filter(({ key }) => searchList?.[key as keyof typeof searchList]);
@@ -89,36 +89,36 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const conditions = [
     {
       label:
-        searchList.gender_preference === 'F'
-          ? '성별 여성 Female'
-          : searchList.gender_preference === 'M'
-            ? '성별 남성 Male'
-            : '성별 무관 Any',
+        searchList.gender_preference === "F"
+          ? "성별 여성 Female"
+          : searchList.gender_preference === "M"
+            ? "성별 남성 Male"
+            : "성별 무관 Any",
       icon: <Users size={19} />,
       active: true,
     },
     {
-      label: `입주 ${new Date(searchList.move_in_date!).toLocaleDateString('ko-KR')}`,
+      label: `입주 ${new Date(searchList.move_in_date!).toLocaleDateString("ko-KR")}`,
       icon: <CalendarDays size={19} />,
       active: !!searchList.move_in_date,
     },
     {
-      label: '반려동물 가능',
+      label: "반려동물 가능",
       icon: <PawPrint size={19} />,
       active: searchList.pets_allowed,
     },
     {
-      label: '흡연 가능',
+      label: "흡연 가능",
       icon: <Cigarette size={19} />,
       active: searchList.smoking_allowed,
     },
     {
-      label: '주차 가능',
+      label: "주차 가능",
       icon: <Car size={19} />,
       active: searchList.parking_available,
     },
     {
-      label: '가구 포함',
+      label: "가구 포함",
       icon: <Sofa size={19} />,
       active: searchList.furnished,
     },
@@ -137,7 +137,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
               {ROOM_TYPE_LABEL[searchList.room_type]}
             </div>
             <span className="text-[#8e857d] font-light text-sm">
-              {' '}
+              {" "}
               {`등록일 ${searchList.created_at?.slice(0, 10)}`}
             </span>
           </div>
@@ -154,11 +154,11 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
               ${Number(searchList.rent_price).toLocaleString()}
             </div>
             <div className="text-[#8e857d] font-light text-sm ml-1">
-              {' '}
+              {" "}
               / 월 month
             </div>
             <div className="text-[#6e6761] font-light text-sm ml-3">
-              {' '}
+              {" "}
               보증금 ${Number(searchList.deposit)}
             </div>
           </div>
@@ -170,9 +170,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
               {conditions.map(({ label, icon, active }) => (
                 <div
                   key={label}
-                  className={`flex items-center gap-2 border rounded-xl px-4 py-3 ${active ? 'border-gray-200 text-gray-800 bg-white' : 'border-gray-100 text-gray-300'}`}
+                  className={`flex items-center gap-2 border rounded-xl px-4 py-3 ${active ? "border-gray-200 text-gray-800 bg-white" : "border-gray-100 text-gray-300"}`}
                 >
-                  <span className={active ? 'text-primary' : 'text-gray-300'}>
+                  <span className={active ? "text-primary" : "text-gray-300"}>
                     {icon}
                   </span>
                   <span className="text-sm break-keep">{label}</span>
@@ -223,7 +223,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
             <span className="text-[#8e857d] font-light text-sm">
               {searchList.amenities_etc
                 ? `기타ㆍ${searchList.amenities_etc}`
-                : ''}
+                : ""}
             </span>
           </div>
 

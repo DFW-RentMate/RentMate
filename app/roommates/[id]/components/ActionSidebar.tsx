@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import useLoginModal from "@/hooks/useLoginModal";
-import { Phone, Mail, Copy, Heart, Check } from "lucide-react";
+import { Phone, Mail, Copy, Heart, Check, Settings } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ActionSidebarProps {
   targetProfileId: string;
@@ -15,6 +16,7 @@ interface ActionSidebarProps {
   phone?: string | null;
   email?: string | null;
   kakaoId?: string | null;
+  isOwner?: boolean;
 }
 
 export default function ActionSidebar({
@@ -27,9 +29,11 @@ export default function ActionSidebar({
   phone,
   email,
   kakaoId,
+  isOwner = false,
 }: ActionSidebarProps) {
   const { data: session } = useSession();
   const loginModal = useLoginModal();
+  const router = useRouter();
 
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [copiedType, setCopiedType] = useState<string | null>(null);
@@ -58,7 +62,6 @@ export default function ActionSidebar({
 
       if (!response.ok) throw new Error("API 요청 실패");
 
-      // 💡 여기서 핵심! 방금 찜했는지(true), 취소했는지(false) Navbar한테 던져줌
       window.dispatchEvent(
         new CustomEvent("favoriteUpdated", { detail: { isAdded: nextState } }),
       );
@@ -91,16 +94,28 @@ export default function ActionSidebar({
           <div className="text-sm text-[#8e857d] mt-0.5">희망 지역: {city}</div>
         </div>
 
-        <button
-          onClick={handleLikeToggle}
-          className="w-full border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-2 font-medium hover:bg-gray-100 transition-colors"
-        >
-          <Heart
-            size={18}
-            className={isLiked ? "fill-red-500 text-red-500" : "text-gray-400"}
-          />
-          {isLiked ? "찜 완료" : "찜하기"}
-        </button>
+        {isOwner ? (
+          <button
+            onClick={() => router.push("/roommates/new")}
+            className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl py-3 flex items-center justify-center gap-2 font-medium transition-colors cursor-pointer"
+          >
+            <Settings size={18} />
+            프로필 수정하기
+          </button>
+        ) : (
+          <button
+            onClick={handleLikeToggle}
+            className="w-full border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-2 font-medium hover:bg-gray-100 transition-colors"
+          >
+            <Heart
+              size={18}
+              className={
+                isLiked ? "fill-red-500 text-red-500" : "text-gray-400"
+              }
+            />
+            {isLiked ? "찜 완료" : "찜하기"}
+          </button>
+        )}
 
         {kakaoId && (
           <button
