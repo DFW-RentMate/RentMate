@@ -103,14 +103,32 @@ const INITIAL_FORM: ListingFormData = {
   photos: [],
 };
 
+interface ListingWizardProps {
+  mode?: 'create' | 'edit';
+  listingId?: string;
+  initialData?: Partial<ListingFormData>;
+}
+
 // ─────────────────────────────────────────────
 // 위저드 본체
 // ─────────────────────────────────────────────
-export default function ListingWizard() {
+export default function ListingWizard({
+  mode = 'create',
+  listingId,
+  initialData,
+}: ListingWizardProps) {
   const router = useRouter();
   const [step, setStep] = useState<STEPS>(STEPS.BASIC);
-  const [form, setForm] = useState<ListingFormData>(INITIAL_FORM);
+  const [form, setForm] = useState<ListingFormData>({
+    ...INITIAL_FORM,
+    ...initialData,
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const steps =
+    mode === 'edit'
+      ? [STEPS.BASIC, STEPS.CONDITIONS, STEPS.PREVIEW]
+      : [STEPS.BASIC, STEPS.CONDITIONS, STEPS.PHOTOS, STEPS.PREVIEW];
 
   const updateForm = <K extends keyof ListingFormData>(
     key: K,
@@ -122,29 +140,36 @@ export default function ListingWizard() {
   // ─── 단계별 유효성 검사 ───
   const validateStep = (): boolean => {
     if (step === STEPS.BASIC) {
-      if (!form.title.trim()) return toast.error('매물 제목을 입력해주세요.'), false;
-      if (!form.address.trim()) return toast.error('주소를 입력해주세요.'), false;
-      if (!form.city) return toast.error('도시를 선택해주세요.'), false;
+      if (!form.title.trim())
+        return (toast.error('매물 제목을 입력해주세요.'), false);
+      if (!form.address.trim())
+        return (toast.error('주소를 입력해주세요.'), false);
+      if (!form.city) return (toast.error('도시를 선택해주세요.'), false);
       if (!form.rentPrice || Number(form.rentPrice) <= 0)
-        return toast.error('월세를 입력해주세요.'), false;
-      if (!form.moveInDate) return toast.error('입주 가능일을 선택해주세요.'), false;
+        return (toast.error('월세를 입력해주세요.'), false);
+      if (!form.moveInDate)
+        return (toast.error('입주 가능일을 선택해주세요.'), false);
       if (!form.contactPhone.trim())
-        return toast.error('연락 가능한 전화번호를 입력해주세요.'), false;
+        return (toast.error('연락 가능한 전화번호를 입력해주세요.'), false);
     }
     if (step === STEPS.CONDITIONS) {
       if (form.description.trim().length < 20)
-        return toast.error('상세 설명을 최소 20자 이상 입력해주세요.'), false;
+        return (toast.error('상세 설명을 최소 20자 이상 입력해주세요.'), false);
     }
     if (step === STEPS.PHOTOS) {
       if (form.photos.length === 0)
-        return toast.error('사진을 최소 1장 업로드해주세요.'), false;
+        return (toast.error('사진을 최소 1장 업로드해주세요.'), false);
     }
     return true;
   };
 
   const onBack = () => {
     if (step === STEPS.BASIC) {
-      router.push('/listings');
+      router.push(mode === 'edit' ? `/listings/${listingId}` : '/listings');
+      return;
+    }
+    if (mode === 'edit' && step === STEPS.PREVIEW) {
+      setStep(STEPS.CONDITIONS);
       return;
     }
     setStep((prev) => prev - 1);
@@ -152,6 +177,10 @@ export default function ListingWizard() {
 
   const onNext = () => {
     if (!validateStep()) return;
+    if (mode === 'edit' && step === STEPS.CONDITIONS) {
+      setStep(STEPS.PREVIEW);
+      return;
+    }
     setStep((prev) => prev + 1);
   };
 
@@ -217,11 +246,14 @@ export default function ListingWizard() {
         photoUrls,
       };
 
-      const res = await fetch('/api/listings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        mode === 'edit' ? `/api/listings/${listingId}` : '/api/listings',
+        {
+          method: mode === 'edit' ? 'PATCH' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        },
+      );
 
       if (!res.ok) throw new Error('등록 실패');
 
@@ -253,7 +285,6 @@ export default function ListingWizard() {
   return (
     <div className="min-h-screen bg-[#fcfaf8] pb-16">
       <div className="mx-auto w-full max-w-screen-xl px-4 sm:px-6 md:px-10 pt-6">
-
         <Link
           href="/listings"
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-900"
@@ -262,7 +293,9 @@ export default function ListingWizard() {
           검색으로 돌아가기
         </Link>
 
-        <h1 className="mt-3 text-3xl font-extrabold text-gray-900">매물 등록</h1>
+        <h1 className="mt-3 text-3xl font-extrabold text-gray-900">
+          매물 등록
+        </h1>
         <p className="mt-1.5 text-sm text-gray-500">
           4단계로 매물 정보를 입력하고 등록하세요.
         </p>
