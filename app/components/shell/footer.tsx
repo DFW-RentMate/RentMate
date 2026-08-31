@@ -17,8 +17,7 @@ const footerLinks: FooterLink[] = [
 ];
 
 // 좌우 여백 패딩 관리
-const containerCls =
-  'mx-auto w-full max-w-screen-xl px-4 sm:px-6 md:px-10 xl:px-20';
+const containerCls = 'w-full px-6 sm:px-10 md:px-16 xl:px-24';
 
 // ─────────────────────────────────────────────
 // Footer 컴포넌트 본체
@@ -29,7 +28,7 @@ export function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-neutral-50 py-3">
       <div className={containerCls}>
-        <div className="flex flex-col gap-6 py-1 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-3">
             <Link href="/" className="flex items-center space-x-3">
               <div className="flex items-center justify-center w-8 h-8 text-white bg-[#FF6B4A] rounded-full">
