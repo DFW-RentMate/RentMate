@@ -6,11 +6,13 @@ import { geocodeAddress } from '@/app/listings/new/geocode';
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await getServerSession(authOptions);
-  if (!session)
+
+  if (!session) {
     return NextResponse.json({ error: '인증 필요' }, { status: 401 });
+  }
 
   const { id } = await params;
   const body = await req.json();
@@ -18,6 +20,7 @@ export async function PATCH(
   const fullAddress = body.zipCode
     ? `${body.addressRaw}, TX ${body.zipCode}`
     : `${body.addressRaw}, TX`;
+
   const { lat, lng } = await geocodeAddress(fullAddress);
 
   const updated = await prisma.listings.update({
