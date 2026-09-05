@@ -2,6 +2,38 @@
 
 RentMate is a full-stack room rental and roommate matching web application designed for the DFW Korean community. It combines rental listing discovery, interactive map browsing, roommate profile search, authentication, and personalized favorites in one platform.
 
+---
+## Screenshots
+
+### Home Page
+
+<img width="1708" height="975" alt="Home Page" src="https://github.com/user-attachments/assets/506b0adc-c5ba-4cbc-a760-2f93f393df8d" />
+
+### Login Page
+
+<img width="1700" height="951" alt="Login Page" src="https://github.com/user-attachments/assets/bc742813-07ae-4dd4-99b2-e34c5f973dff" />
+
+### Rental Listings & Map Search
+
+<img width="1708" height="954" alt="Rental Listings and Map Search" src="https://github.com/user-attachments/assets/b233a88f-89a3-4de9-8ec6-72abf221ae30" />
+
+### Rental Detail
+
+<img width="1700" height="1037" alt="Rental Detail" src="https://github.com/user-attachments/assets/f0739ea1-5128-49f3-8bce-a2ab08093476" />
+
+### Roommate Search
+
+<img width="1694" height="1014" alt="Roommate Search" src="https://github.com/user-attachments/assets/2503a68a-9918-46ae-9ee4-03478fc3a7fc" />
+
+### Registering Rental
+
+<img width="1692" height="1063" alt="Registering Rental" src="https://github.com/user-attachments/assets/605a104f-b10d-4804-a74d-9beb42dc658b" />
+
+### Registering Roommate Profile
+
+<img width="1702" height="1043" alt="Registering Roommate Profile" src="https://github.com/user-attachments/assets/a1bbe698-90b7-4d6e-bd8c-6f64a901c568" />
+
+---
 ## Features
 
 ### Rental Listings
@@ -35,7 +67,7 @@ RentMate is a full-stack room rental and roommate matching web application desig
   - Desired city
   - Budget range
   - Gender
-- Match profiles using overlapping budget ranges and user preferences
+- Filter roommate profiles using overlapping budget ranges and user preferences
 - Display profile information such as occupation, budget, location, introduction, and profile photo
 - Save roommate profiles as favorites
 
@@ -171,7 +203,7 @@ The rental listing page shares the selected listing state between the list and m
 
 Roommate profiles combine data from the user and roommate profile tables.
 
-Users can filter roommate profiles by city, gender, and budget range. Budget matching checks whether the selected budget range overlaps with each roommate profile's preferred range.
+Users can filter roommate profiles by city, gender, and budget range. Budget filtering checks whether the selected budget range overlaps with each roommate profile's preferred range.
 
 ### Favorites
 
@@ -208,7 +240,7 @@ Main models include:
 - `roommate_profiles`
 - `roommate_favorites`
 
-The database uses relational constraints and composite unique keys to prevent duplicate favorites for the same user and target listing/profile.
+The database uses relational constraints and composite unique keys to prevent duplicate favorites for the same user and target listing or roommate profile.
 
 ---
 
@@ -323,33 +355,6 @@ RentMate/
 └── README.md
 ```
 
----
-
-## Screenshots
-
-Add screenshots here after deployment.
-
-```md
-![Home Page]<img width="1708" height="975" alt="Screenshot 2026-09-04 at 10 02 51 PM" src="https://github.com/user-attachments/assets/506b0adc-c5ba-4cbc-a760-2f93f393df8d" />
-![Login Page]<img width="1700" height="951" alt="Screenshot 2026-09-04 at 10 04 08 PM" src="https://github.com/user-attachments/assets/bc742813-07ae-4dd4-99b2-e34c5f973dff" />
-![Rental Listings and Map Search]<img width="1708" height="954" alt="Screenshot 2026-09-04 at 10 03 07 PM" src="https://github.com/user-attachments/assets/b233a88f-89a3-4de9-8ec6-72abf221ae30" />
-![Rental Detail]<img width="1700" height="1037" alt="Screenshot 2026-09-04 at 10 03 26 PM" src="https://github.com/user-attachments/assets/f0739ea1-5128-49f3-8bce-a2ab08093476" />
-![Roommate Search]<img width="1694" height="1014" alt="Screenshot 2026-09-04 at 10 03 41 PM" src="https://github.com/user-attachments/assets/2503a68a-9918-46ae-9ee4-03478fc3a7fc" />
-![Registering Rental]<img width="1692" height="1063" alt="Screenshot 2026-09-04 at 10 04 30 PM" src="https://github.com/user-attachments/assets/605a104f-b10d-4804-a74d-9beb42dc658b" />
-![Registering Roommate Profile]<img width="1702" height="1043" alt="Screenshot 2026-09-04 at 10 06 09 PM" src="https://github.com/user-attachments/assets/a1bbe698-90b7-4d6e-bd8c-6f64a901c568" />
-
-
-
-```
-
----
-
 ## Team Project
 
 RentMate was developed as a team project during summer break. The project focuses on building a practical full-stack platform for rental discovery and roommate matching while applying modern web development technologies such as Next.js, Prisma, PostgreSQL, authentication, cloud storage, and interactive maps.
-
----
-
-## License
-
-This project is licensed under the MIT License.
